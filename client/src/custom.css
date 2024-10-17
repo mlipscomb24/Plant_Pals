@@ -1,0 +1,116 @@
+/* Custom variables */
+:root {
+  --primary-color: #4ade80; /* Bright green from logo */
+  --secondary-color: #40a0c7; /* Blue from logo background */
+  --accent-color-1: #f472b6; /* Pink from logo */
+  --accent-color-2: #fb923c; /* Orange from logo */
+  --background-color: #ffffff; /* White background */
+  --text-color: #333333; /* Dark gray for text on light background */
+  --light-gray: #f0f0f0; /* Light gray for subtle backgrounds */
+}
+
+/* Global Styles */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Custom styles to complement Semantic UI */
+.ui.menu {
+  background-color: var(--secondary-color);
+}
+
+.ui.menu .item {
+  color: var(--background-color) !important;
+}
+
+.ui.menu .item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.plant-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--light-gray);
+  border: 1px solid var(--secondary-color);
+}
+
+.plant-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.plant-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ui.grid {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Custom button colors */
+.ui.button.primary {
+  background-color: var(--accent-color-1);
+  color: var(--background-color);
+}
+
+.ui.button.primary:hover {
+  background-color: var(--accent-color-2);
+}
+
+.ui.button.secondary {
+  background-color: var(--accent-color-2);
+  color: var(--background-color);
+}
+
+.ui.button.secondary:hover {
+  background-color: var(--accent-color-1);
+}
+
+/* Additional styles for better contrast and readability */
+.ui.header {
+  color: var(--secondary-color);
+}
+
+.ui.segment {
+  background-color: var(--light-gray);
+  border: 1px solid var(--secondary-color);
+}
+
+/* Style for links */
+a {
+  color: var(--secondary-color);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--primary-color);
+}
+
+/* Additional suggestions for white background */
+.home-container {
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  padding: 2em;
+  border-radius: 10px;
+  margin-top: 2em;
+}
+
+.home-container .ui.header {
+  color: var(--background-color);
+}
+
+.content-section {
+  background-color: var(--light-gray);
+  padding: 2em;
+  border-radius: 10px;
+  margin-bottom: 2em;
+}
+
+.content-section .ui.header {
+  color: var(--secondary-color);
+}
