@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Image, Button } from "semantic-ui-react";
 
-const PlantItem = ({ plant, onAction, actionText, actionColor }) => (
+const PlantCard = ({ plant, onAction, actionText, actionColor }) => (
   <Card>
     <Image src={plant.image} wrapped ui={false} />
     <Card.Content>
@@ -20,4 +20,4 @@ const PlantItem = ({ plant, onAction, actionText, actionColor }) => (
   </Card>
 );
 
-export default PlantItem;
+export default PlantCard;
