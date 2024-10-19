@@ -18,3 +18,16 @@ export const DELETE_PLANT = gql`
     }
   }
 `;
+
+export const LOGIN_USER = gql`
+  mutation LoginUser($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+  token 
+  profile {
+    _id
+    name
+     }
+   }
+ }
+`;
+
