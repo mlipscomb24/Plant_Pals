@@ -1,14 +1,29 @@
 import { gql } from "@apollo/client";
 
+export const GLOBAL_LOADING_QUERY = gql`
+  query GlobalLoading {
+    isLoading @client
+  }
+`;
+
+const PLANT_FIELDS = gql`
+  fragment PlantFields on Plant {
+    _id
+    name
+    species
+    waterFrequency
+    sunlightNeeds
+    image_url
+  }
+`;
+
 export const GET_PLANTS = gql`
   query getPlants {
     plants {
-      _id
-      name
-      species
-      waterFrequency
+      ...PlantFields
     }
   }
+  ${PLANT_FIELDS}
 `;
 
 export const GET_USER = gql`
@@ -18,22 +33,18 @@ export const GET_USER = gql`
       username
       email
       plants {
-        _id
-        name
-        species
-        waterFrequency
+        ...PlantFields
       }
     }
   }
+  ${PLANT_FIELDS}
 `;
 
 export const SEARCH_PLANTS = gql`
   query searchPlants($searchTerm: String!) {
     searchPlants(searchTerm: $searchTerm) {
-      _id
-      name
-      species
-      waterFrequency
+      ...PlantFields
     }
   }
+  ${PLANT_FIELDS}
 `;

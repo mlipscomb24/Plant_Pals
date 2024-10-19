@@ -1,26 +1,23 @@
 import React from "react";
-import { useQuery } from "@apollo/client";
-import { GET_PLANTS } from "../../utils/queries";
-import { Card, Message } from "semantic-ui-react";
-import PlantItem from "./PlantItem";
+import { Card, Message, Button } from "semantic-ui-react";
+import PlantCard from "./PlantCard";
 
-const PlantList = ({ onDelete }) => {
-  const { loading, error, data } = useQuery(GET_PLANTS);
-
-  if (loading) return <Message info>Loading...</Message>;
-  if (error) return <Message negative>Error: {error.message}</Message>;
+const PlantList = ({ plants, onAddPlant, onDeletePlant }) => {
+  if (plants.length === 0) {
+    return <Message info>No plants to display</Message>;
+  }
 
   return (
     <div>
-      <h2>My Plants</h2>
       <Card.Group doubling itemsPerRow={3} stackable>
-        {data.plants.map((plant) => (
-          <PlantItem
+        {plants.map((plant) => (
+          <PlantCard
             key={plant._id}
             plant={plant}
-            onAction={onDelete}
-            actionText="Remove Plant"
-            actionColor="red"
+            onAction={onAddPlant ? () => onAddPlant(plant) : null}
+            actionText={onAddPlant ? "Add Plant" : null}
+            actionColor={onAddPlant ? "green" : null}
+            onDelete={onDeletePlant ? () => onDeletePlant(plant) : null}
           />
         ))}
       </Card.Group>
