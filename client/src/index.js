@@ -13,9 +13,15 @@ import "semantic-ui-css/semantic.min.css";
 import "./custom.css";
 import App from "./App.jsx";
 
+// Determine the GraphQL endpoint based on the environment
+const gqlEndpoint =
+  process.env.NODE_ENV === "production"
+    ? "https://plant-pals.onrender.com/graphql"
+    : "http://localhost:3001/graphql";
+
 // Create an HTTP link
 const httpLink = createHttpLink({
-  uri: "http://localhost:3001/graphql", // Adjust this if your GraphQL endpoint is different
+  uri: gqlEndpoint, // Adjust this if your GraphQL endpoint is different
 });
 
 // Error handling link
@@ -44,7 +50,7 @@ const authLink = setContext((_, { headers }) => {
 
 // Create an Apollo Client instance
 const client = new ApolloClient({
-  uri: "http://localhost:3001/graphql",
+  uri: gqlEndpoint,
   cache: new InMemoryCache(),
 });
 

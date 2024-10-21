@@ -42,6 +42,9 @@ app.get("/api/plants/:id", async (req, res) => {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  persistedQueries: {
+    cache: "bounded",
+  },
 });
 
 // Create a new instance of an Apollo server with the GraphQL schema
