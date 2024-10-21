@@ -1,4 +1,5 @@
-
+const { User, Plants } = require('../models');
+const { signToken, AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
     Query: {
@@ -13,7 +14,7 @@ const resolvers = {
         if (context.user) {
             return User.findOne({ _id: context.user._id }); 
         }
-        throw new AuthenticationError('You need to be logged in to view your profile.');
+        throw AuthenticationError;
         },
     user: async (parent, args, context) => {
         if (context.user) {
@@ -23,14 +24,13 @@ const resolvers = {
             });
             return user;
       }
-     throw new AuthenticationError('You need to be logged in to view this profile.');
+     throw AuthenticationError;
     }, 
 
 
-//mutation that conforms to activities
      Mutatation: {
         // add validation
-        addUser: async (parent, { email, password }) => {
+        addUser: async (parent, args) => {
             const user = await User.create(args);
             const token = signToken(user);
             
@@ -56,14 +56,19 @@ const resolvers = {
      login: async (parent, { email, password }) => {
         const user = await User.findOne({ email });
         
-        if (!user) throw new Error('No user found with that email.');
+        if (!user) {
+            
+            throw AuthenticationError;
+        }
+
+        const validPw = await user.comparePassword(password);
         
-        const valid = await user.comparePassword(password);
-        
-        if (!valid) throw new Error('Incorrect password.');
-        
+        if (!validPw) {
+            
+            throw AuthenticationError;
+        }
+
         const token = signToken(user);
-        
         return { token, user };
      },
    

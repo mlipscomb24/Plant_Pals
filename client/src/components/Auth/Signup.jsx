@@ -3,7 +3,8 @@ import { Form, Button, Header, Segment } from "semantic-ui-react";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
   });

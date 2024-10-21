@@ -2,7 +2,16 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Container, Header, Button, Segment, Image } from "semantic-ui-react";
 
-const Home = () => (
+// import { QUERY_USERS } from "../utils/queries"; 
+
+const Home = () => /* {
+
+  const { loading, data } = useQuery(QUERY_USERS);
+  const users = data?.users || [];
+}
+  
+  
+  return*/ (
   <Container fluid>
     <Segment
       vertical
