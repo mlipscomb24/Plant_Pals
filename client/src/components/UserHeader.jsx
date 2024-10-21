@@ -1,4 +1,5 @@
 import React from "react";
+import NotificationButton from "../components/Dashboard/NotificationButton";
 import { Segment, Grid, Image, Header } from "semantic-ui-react";
 
 const UserHeader = ({ user, gamificationStatus }) => {
@@ -30,6 +31,7 @@ const UserHeader = ({ user, gamificationStatus }) => {
       <Grid columns={2}>
         <Grid.Column width={4}>
           <Image src={user.avatar} size="small" circular />
+          <NotificationButton />
         </Grid.Column>
         <Grid.Column width={12}>
           <Header as="h2">{user.name}'s Plant Collection</Header>

@@ -41,5 +41,11 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    rollupOptions: {
+    input: './index.html',
+    },
+    outDir: '../client/dist',
   }
 });
