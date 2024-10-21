@@ -58,3 +58,8 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
+
+// Service worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register("/pwa-service-worker.js");
+}

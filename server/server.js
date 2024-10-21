@@ -15,6 +15,8 @@ app.use(express.json());
 // Enable CORS for all routes and origins
 app.use(cors());
 
+app.use(express.static(path.join(__dirname, "../client/public")));
+
 // New API routes
 app.get("/api/plants/search", async (req, res) => {
   try {
