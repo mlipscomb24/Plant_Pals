@@ -12,16 +12,17 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 
-// Import your components
+// Import components
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Plantcare from "./pages/Plantcare";
+import PostDetail from "./pages/PostDetail";
 import Header from "./components/Header";
 import Signup from "./components/Auth/Signup";
 import Login from "./components/Auth/Login";
 import LoadingSpinner from "./components/LoadingSpinner";
 
-// Import your queries
+// Import queries
 import { GLOBAL_LOADING_QUERY } from "./utils/queries";
 
 // Create an HTTP link
@@ -31,9 +32,7 @@ const httpLink = createHttpLink({
 
 // Create a middleware for authentication
 const authLink = setContext((_, { headers }) => {
-  // Get the authentication token from local storage if it exists
   const token = localStorage.getItem("token");
-  // Return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
@@ -42,34 +41,51 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// Create an error handling link
+// Enhanced error handling link
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors)
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      console.error(
         `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    );
-  if (networkError) console.log(`[Network error]: ${networkError}`);
+      );
+      // You could add toast notifications here if you want to show errors to users
+    });
+  }
+  if (networkError) {
+    console.error(`[Network error]: ${networkError}`);
+    // Handle network errors (optional)
+  }
 });
 
-// Create the Apollo Client instance
+// Apollo Client configuration
 const client = new ApolloClient({
   link: errorLink.concat(authLink.concat(httpLink)),
-  cache: new InMemoryCache(),
-  typeDefs: gql`
-    extend type Query {
-      isLoading: Boolean!
-    }
-  `,
-  resolvers: {
-    Query: {
-      isLoading: () => false,
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          isLoading: {
+            read() {
+              return false;
+            },
+          },
+        },
+      },
+    },
+  }),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "cache-and-network",
+      errorPolicy: "all",
+    },
+    query: {
+      fetchPolicy: "network-only",
+      errorPolicy: "all",
     },
   },
 });
 
-// Initialize the isLoading state in the cache
+// Initialize cache
 client.writeQuery({
   query: GLOBAL_LOADING_QUERY,
   data: {
@@ -77,6 +93,7 @@ client.writeQuery({
   },
 });
 
+// Main content component
 function AppContent() {
   const { data } = useQuery(GLOBAL_LOADING_QUERY);
   const isLoading = data?.isLoading;
@@ -87,17 +104,24 @@ function AppContent() {
       <Header />
       <Container style={{ marginTop: "7em" }}>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/plantcare" element={<Plantcare />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+
+          {/* Forum Routes */}
+          <Route path="/plantcare" element={<Plantcare />} />
+          <Route path="/plantcare/post/:id" element={<PostDetail />} />
+
+          {/* Protected Routes */}
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Container>
     </div>
   );
 }
 
+// Root App component
 function App() {
   return (
     <ApolloProvider client={client}>
