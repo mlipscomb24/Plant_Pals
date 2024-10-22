@@ -32,6 +32,10 @@ login(idToken) {
 //reload page and reset state
   window.location.assign('/');
   }
+  logout() {
+    localStorage.removeItem('token');
+    window.location.reload();
+  }
 }
 
 export default new AuthService();

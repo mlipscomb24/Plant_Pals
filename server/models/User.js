@@ -1,6 +1,7 @@
 // server/models/User.js
 
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -131,6 +132,21 @@ UserSchema.methods.updateForumActivity = async function (activityType) {
   }
 
   return this.save();
+};
+
+//pre-save middleware to create password
+userSchema.pre('save', async function(next) {
+  if (this.isNew || this.isModified ('password')) {
+    const saltRounds = 10;
+    this.password = await bcrypt.hash(this.password, saltRounds);
+  }
+  next();
+})
+
+// compare entered password with hashed password
+userSchema.methods.isValidPassword = async function(password) {
+  return await bcrypt.compare(password, this.password);
+  
 };
 
 const User = mongoose.model("User", UserSchema);
