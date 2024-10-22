@@ -1,43 +1,44 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { useQuery } from "@apollo/client";
 import { Container, Segment, Header } from "semantic-ui-react";
 import UserHeader from "../components/UserHeader";
 import PlantSearch from "../components/Plants/PlantSearch";
 import PlantList from "../components/Plants/PlantList";
 import axios from "axios";
+import Auth from "../utils/auth";
+import { GET_ME } from "../utils/queries";
 
 const Profile = () => {
-  const [user] = useState({
-    name: "John Doe",
-    avatar: "https://react.semantic-ui.com/images/avatar/large/matthew.png",
-    id: "123",
-  });
+  // All hooks must be declared at the top level
+  const { loading, error, data, refetch } = useQuery(GET_ME);
   const [searchResults, setSearchResults] = useState([]);
-  const [myPlants, setMyPlants] = useState([
-    {
-      _id: "1",
-      name: "Monstera",
-      species: "Monstera deliciosa",
-      waterReminder: "Water when top 2-3 inches of soil are dry",
-      sunlightNeeds: "Bright indirect light",
-      image: "https://example.com/monstera.jpg",
-    },
-  ]);
   const [gamificationStatus, setGamificationStatus] = useState({
     currentTier: "Seedling",
-    plantCount: myPlants.length,
+    plantCount: 0,
     badges: [],
   });
 
-  const updateGamificationStatus = useCallback(() => {
-    setGamificationStatus((prevStatus) => ({
-      ...prevStatus,
-      plantCount: myPlants.length,
-    }));
-  }, [myPlants.length]);
+  // Access user data from query
+  const userData = data?.me || {};
 
+  // useEffect must be declared before any conditional returns
   useEffect(() => {
-    updateGamificationStatus();
-  }, [myPlants, updateGamificationStatus]);
+    if (userData.plants) {
+      setGamificationStatus((prevStatus) => ({
+        ...prevStatus,
+        plantCount: userData.plants.length,
+      }));
+    }
+  }, [userData.plants]);
+
+  // Auth check can come after hooks
+  if (!Auth.loggedIn()) {
+    return <Navigate to="/login" />;
+  }
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error! {error.message}</div>;
 
   const handleSearch = async (term) => {
     try {
@@ -59,18 +60,22 @@ const Profile = () => {
       sunlightNeeds:
         plant.sunlightNeeds || "Sunlight information not available",
     };
-    setMyPlants((prevPlants) => [...prevPlants, newPlant]);
-    updateGamificationStatus();
+    // Update your backend here
+    refetch(); // Refetch user data after adding plant
   };
 
-  const handleDeletePlant = (plant) => {
-    const updatedPlants = myPlants.filter((p) => p._id !== plant._id);
-    setMyPlants(updatedPlants);
+  const handleDeletePlant = async (plantId) => {
+    try {
+      // Add your delete mutation here
+      refetch(); // Refetch user data after deletion
+    } catch (err) {
+      console.error("Error deleting plant:", err);
+    }
   };
 
   return (
     <Container>
-      <UserHeader user={user} gamificationStatus={gamificationStatus} />
+      <UserHeader user={userData} gamificationStatus={gamificationStatus} />
       <PlantSearch onSelectPlant={handleAddPlant} />
       <Segment>
         <Header as="h2">Search Results</Header>
@@ -81,7 +86,7 @@ const Profile = () => {
         />
         <Header as="h3">My Plants</Header>
         <PlantList
-          plants={myPlants}
+          plants={userData.plants || []}
           onDeletePlant={handleDeletePlant}
           title="My Plants"
         />

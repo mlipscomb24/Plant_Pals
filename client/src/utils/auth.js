@@ -1,4 +1,4 @@
-import decode from 'jwt-decode';
+import decode from "jwt-decode";
 
 class AuthService {
   getUser() {
@@ -7,34 +7,34 @@ class AuthService {
 
   loggedIn() {
     const token = this.getToken();
-    return!!token &&!this.isTokenExpired(token);
-}
+    return !!token && !this.isTokenExpired(token);
+  }
 
-isTokenExpired(token) {
-  try {
-    const decoded = decode(token);
-    if (decoded.exp < Date.now() / 1000) {
-      return true;
-    } else return false;
+  isTokenExpired(token) {
+    try {
+      const decoded = decode(token);
+      if (decoded.exp < Date.now() / 1000) {
+        return true;
+      } else return false;
     } catch (err) {
       return false;
+    }
   }
-}
-//retrieve token from local storage
-getToken() {
-  return localStorage.getItem('token');
-}
-// saves token to local storage
-login(idToken) {
 
-  //clear user token and user session from local storage
-  localStorage.setItem('token', idToken);
-//reload page and reset state
-  window.location.assign('/');
+  getToken() {
+    return localStorage.getItem("token");
   }
+
+  login(idToken) {
+    localStorage.setItem("token", idToken);
+    // Update to redirect to profile page after login
+    window.location.assign("/profile");
+  }
+
   logout() {
-    localStorage.removeItem('token');
-    window.location.reload();
+    localStorage.removeItem("token");
+    // Redirect to home page after logout
+    window.location.assign("/");
   }
 }
 
