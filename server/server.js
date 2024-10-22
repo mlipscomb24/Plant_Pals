@@ -4,7 +4,12 @@ const path = require("path");
 const cors = require("cors");
 const { typeDefs, resolvers } = require("./schemas");
 const db = require("./config/connection");
+
+const plantApiService = require("./services/plantApiService");
+require("dotenv").config();
+
 const { Post, Comment, User } = require("./models");
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +29,11 @@ app.use(
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+
+  persistedQueries: {
+    cache: "bounded",
+  },
+
   context: async ({ req }) => {
     return {
       models: { Post, Comment, User },
@@ -45,6 +55,7 @@ const server = new ApolloServer({
       },
     },
   ],
+
 });
 
 const startApolloServer = async () => {
@@ -57,6 +68,15 @@ const startApolloServer = async () => {
       credentials: true,
     },
   });
+
+if (process.env.NODE_ENV === "production") {
+    console.log("Currently in production mode");
+    app.use(express.static(path.join(__dirname, "../client/build")));
+
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+    });
+}
 
   db.once("open", () => {
     // Add this debug query when the database connects
