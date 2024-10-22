@@ -22,10 +22,6 @@ const typeDefs = gql`
     email: String
     plants: [Plant]
   }
-
-  type Mutation {
-    
-  }
 `;
 
 module.exports = typeDefs;

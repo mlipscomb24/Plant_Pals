@@ -5,6 +5,7 @@ const cors = require("cors"); // Import CORS package
 const { typeDefs, resolvers } = require("./schemas"); // Correctly importing the index.js from schemas
 const db = require("./config/connection");
 const plantApiService = require("./services/plantApiService");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,8 +15,6 @@ app.use(express.json());
 
 // Enable CORS for all routes and origins
 app.use(cors());
-
-app.use(express.static(path.join(__dirname, "../client/public")));
 
 // New API routes
 app.get("/api/plants/search", async (req, res) => {
@@ -52,13 +51,14 @@ const startApolloServer = async () => {
   await server.start();
   server.applyMiddleware({ app });
 
-  if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
+    console.log("Currently in production mode");
     app.use(express.static(path.join(__dirname, "../client/build")));
 
     app.get("*", (req, res) => {
       res.sendFile(path.join(__dirname, "../client/build", "index.html"));
     });
-    }
+}
 
   db.once("open", () => {
     app.listen(PORT, () => {
