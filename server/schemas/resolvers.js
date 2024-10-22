@@ -64,6 +64,16 @@ const resolvers = {
         throw new Error("Error fetching user posts. Please try again later.");
       }
     },
+
+    // Added the searchPlants query resolver
+    searchPlants: async (_, { searchTerm }) => {
+      try {
+        const plants = await plantApiService.searchPlants(searchTerm);
+        return plants;
+      } catch (error) {
+        throw new Error(`Failed to fetch plant data: ${error.message}`);
+      }
+    },
   },
 
   Mutation: {

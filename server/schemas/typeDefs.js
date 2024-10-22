@@ -17,8 +17,8 @@ const typeDefs = gql`
     plants: [Plant]
     posts: [Post]
     comments: [Comment]
-    postCount: Int # Added field
-    commentCount: Int # Added field
+    postCount: Int
+    commentCount: Int
   }
 
   type Post {
@@ -29,7 +29,7 @@ const typeDefs = gql`
     createdAt: String!
     updatedAt: String
     comments: [Comment]
-    commentCount: Int # Added field
+    commentCount: Int
     likes: Int
     tags: [String]
   }
@@ -61,7 +61,6 @@ const typeDefs = gql`
     posts: [Post]
     post(id: ID!): Post
     userPosts(userId: ID!): [Post]
-    # Added queries
     getPostsByTag(tag: String!): [Post]
     getRecentPosts(limit: Int): [Post]
   }
