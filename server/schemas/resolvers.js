@@ -74,6 +74,13 @@ const resolvers = {
         throw new Error(`Failed to fetch plant data: ${error.message}`);
       }
     },
+
+    me: async (parent, args, context) => {
+      if (context.user) {
+          return User.findOne({ _id: context.user._id }); 
+      }
+      throw AuthenticationError;
+      },
 // duplicate user query, may need to be implemented into line 57
 
   /*  user: async (parent, args, context) => {
