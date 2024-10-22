@@ -4,54 +4,54 @@ require("dotenv").config();
 const PERENUAL_API_KEY = process.env.PERENUAL_API_KEY;
 const PERENUAL_API_BASE_URL = "https://perenual.com/api";
 
+// Plant API Service to handle the external API call
 const plantApiService = {
   searchPlants: async function (query) {
     const url = `${PERENUAL_API_BASE_URL}/species-list?key=${PERENUAL_API_KEY}&q=${encodeURIComponent(
       query
     )}`;
+
+    console.log("Fetching from URL:", url); // Log the API call for debugging purposes
+
     const response = await fetch(url);
     const json = await response.json();
 
+    // Handle unsuccessful responses
     if (!response.ok) {
       throw new Error(
-        `API responded with status ${response.status}: ${
-          json.message || "Unknown error"
-        }`
+        `API responded with status ${response.status}: ${json.message}`
       );
     }
 
-    console.log("Full API response:", JSON.stringify(json, null, 2));
-
-    return json.data.map((plant) => {
-      console.log("Processing plant:", plant);
-      return {
-        _id: plant.id.toString(),
-        name: plant.common_name || plant.scientific_name || "Unknown",
-        species: plant.scientific_name || "Unknown",
-        waterFrequency: plant.watering || "Unknown",
-        sunlightNeeds: Array.isArray(plant.sunlight)
-          ? plant.sunlight.join(", ")
-          : plant.sunlight || "Unknown",
-        image_url: plant.default_image ? plant.default_image.regular_url : null,
-      };
-    });
+    // Transform the response data to match your GraphQL schema
+    return json.data.map((plant) => ({
+      _id: plant.id.toString(),
+      name: plant.common_name || plant.scientific_name || "Unknown",
+      species: plant.scientific_name || "Unknown",
+      waterFrequency: plant.watering || "Unknown",
+      sunlightNeeds: Array.isArray(plant.sunlight)
+        ? plant.sunlight.join(", ")
+        : plant.sunlight || "Unknown",
+      image_url: plant.default_image ? plant.default_image.regular_url : null,
+    }));
   },
 
   getPlantDetails: async function (plantId) {
     const url = `${PERENUAL_API_BASE_URL}/species/details/${plantId}?key=${PERENUAL_API_KEY}`;
+
+    console.log("Fetching plant details from URL:", url); // Log the API call for debugging purposes
+
     const response = await fetch(url);
     const json = await response.json();
 
+    // Handle unsuccessful responses
     if (!response.ok) {
       throw new Error(
-        `API responded with status ${response.status}: ${
-          json.message || "Unknown error"
-        }`
+        `API responded with status ${response.status}: ${json.message}`
       );
     }
 
-    console.log("Full plant details:", JSON.stringify(json, null, 2));
-
+    // Transform the response data to match your GraphQL schema
     return {
       _id: json.id.toString(),
       name: json.common_name || "Unknown",

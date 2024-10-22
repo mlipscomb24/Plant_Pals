@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node server.js",
-    "watch": "nodemon server.js"
+    "watch": "nodemon server.js",
+    "seed": "node seeds/forumSeeds.js"
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
