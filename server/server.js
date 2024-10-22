@@ -4,12 +4,11 @@ const path = require("path");
 const cors = require("cors");
 const { typeDefs, resolvers } = require("./schemas");
 const db = require("./config/connection");
-
+const { authMiddleware } = require("./utils/auth");
 const plantApiService = require("./services/plantApiService");
 require("dotenv").config();
 
 const { Post, Comment, User } = require("./models");
-
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -17,25 +16,26 @@ const PORT = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Explicit CORS setup allowing requests from the frontend
+// Explicit CORS setup
 app.use(
   cors({
-    origin: "http://localhost:3000", // Ensure this matches your frontend URL
-    credentials: true, // If you are using cookies/auth, enable this
+    origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 
-// Set up Apollo Server with debugging and logging
+// Updated Apollo Server with auth middleware
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-
   persistedQueries: {
     cache: "bounded",
   },
-
   context: async ({ req }) => {
+    // Add auth middleware to context
+    const authContext = authMiddleware({ req });
     return {
+      user: authContext.user,
       models: { Post, Comment, User },
     };
   },
@@ -55,31 +55,29 @@ const server = new ApolloServer({
       },
     },
   ],
-
 });
 
 const startApolloServer = async () => {
   await server.start();
-  // Apply middleware to allow CORS in Apollo Server specifically
+
   server.applyMiddleware({
     app,
     cors: {
-      origin: "http://localhost:3000", // Your client URL
+      origin: "http://localhost:3000",
       credentials: true,
     },
   });
 
-if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === "production") {
     console.log("Currently in production mode");
     app.use(express.static(path.join(__dirname, "../client/build")));
 
     app.get("*", (req, res) => {
       res.sendFile(path.join(__dirname, "../client/build", "index.html"));
     });
-}
+  }
 
   db.once("open", () => {
-    // Add this debug query when the database connects
     Post.find({}).then((posts) => {
       console.log("Current posts in database:", posts);
     });

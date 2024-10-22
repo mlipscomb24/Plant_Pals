@@ -18,8 +18,8 @@ import Profile from "./pages/Profile";
 import Plantcare from "./pages/Plantcare";
 import PostDetail from "./pages/PostDetail";
 import Header from "./components/Header";
-import Signup from "./components/Auth/Signup";
-import Login from "./components/Auth/Login";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 // Import queries
