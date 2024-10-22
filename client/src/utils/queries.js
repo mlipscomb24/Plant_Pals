@@ -158,6 +158,43 @@ export const GET_USER_POSTS = gql`
   ${POST_FIELDS}
 `;
 
+export const QUERY_USERS = gql`
+ query allUsers { 
+  users {
+    _id
+    username
+    plants
+  }
+}   
+`;
+
+export const QUERY_SINGLE_USER = gql`
+  query singleUser($userId: ID!) {
+  user(userId: $userId) {
+    _id
+    username
+    plants {
+      _id
+      species
+      waterFrequency
+      }
+  }
+}
+`;
+
+export const QUERY_ME = gql`
+  query me {
+    me {
+      _id
+      username
+      plants {
+        _id
+        species
+        waterFrequency
+      }
+    }
+  `;
+
 // Export all fragments for reuse
 export const FRAGMENTS = {
   PLANT_FIELDS,
