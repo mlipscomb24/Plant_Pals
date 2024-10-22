@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useQuery, gql } from "@apollo/client";
 import {
   Input,
   List,
@@ -7,31 +8,33 @@ import {
   Message,
   Button,
 } from "semantic-ui-react";
-import API from "../../utils/api";
+
+// GraphQL query for plant search
+const SEARCH_PLANTS = gql`
+  query SearchPlants($searchTerm: String!) {
+    searchPlants(searchTerm: $searchTerm) {
+      _id
+      name
+      species
+      waterFrequency
+      sunlightNeeds
+      image_url
+    }
+  }
+`;
 
 const PlantSearch = ({ onSelectPlant }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  const handleSearch = async () => {
-    if (!searchTerm.trim()) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const results = await API.searchPlants(searchTerm);
-      setSearchResults(results);
-    } catch (err) {
-      setError("Failed to fetch plant data. Please try again.");
-      console.error("Search error:", err);
-    }
-    setLoading(false);
-  };
+  // Execute the searchPlants query when the searchTerm changes
+  const { loading, error, data } = useQuery(SEARCH_PLANTS, {
+    variables: { searchTerm },
+    skip: searchTerm.length < 3, // Skip the query until the search term is long enough
+  });
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleSearch();
+    if (event.key === "Enter" && searchTerm.length >= 3) {
+      // Manually trigger search if needed
     }
   };
 
@@ -44,7 +47,6 @@ const PlantSearch = ({ onSelectPlant }) => {
         onKeyPress={handleKeyPress}
         action={{
           icon: "search",
-          onClick: handleSearch,
           loading: loading,
           disabled: loading,
         }}
@@ -52,12 +54,12 @@ const PlantSearch = ({ onSelectPlant }) => {
       {error && (
         <Message negative>
           <Message.Header>Error</Message.Header>
-          <p>{error}</p>
+          <p>{error.message}</p>
         </Message>
       )}
-      {searchResults.length > 0 && (
+      {data?.searchPlants?.length > 0 && (
         <List divided relaxed style={{ marginTop: "20px" }}>
-          {searchResults.map((plant) => (
+          {data.searchPlants.map((plant) => (
             <List.Item key={plant._id}>
               <Image avatar src={plant.image_url || "/placeholder-plant.jpg"} />
               <List.Content>

@@ -15,7 +15,7 @@ import App from "./App.jsx";
 
 // Create an HTTP link
 const httpLink = createHttpLink({
-  uri: "http://localhost:3001/graphql", // Adjust this if your GraphQL endpoint is different
+  uri: "http://localhost:3001/graphql",
 });
 
 // Error handling link
@@ -29,11 +29,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
-// Authentication link (for future use)
+// Authentication link
 const authLink = setContext((_, { headers }) => {
-  // Get the authentication token from local storage if it exists
   const token = localStorage.getItem("token");
-  // Return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
@@ -42,10 +40,20 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// Create an Apollo Client instance
+// Create Apollo Client with all links properly chained
 const client = new ApolloClient({
-  uri: "http://localhost:3001/graphql",
+  link: errorLink.concat(authLink.concat(httpLink)), // Chain the links together
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "network-only",
+      errorPolicy: "all",
+    },
+    query: {
+      fetchPolicy: "network-only",
+      errorPolicy: "all",
+    },
+  },
 });
 
 ReactDOM.render(
