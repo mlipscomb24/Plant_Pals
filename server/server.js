@@ -1,11 +1,15 @@
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const path = require("path");
-const cors = require("cors"); // Import CORS package
-const { typeDefs, resolvers } = require("./schemas"); // Correctly importing the index.js from schemas
+const cors = require("cors");
+const { typeDefs, resolvers } = require("./schemas");
 const db = require("./config/connection");
+
 const plantApiService = require("./services/plantApiService");
 require("dotenv").config();
+
+const { Post, Comment, User } = require("./models");
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,43 +17,57 @@ const PORT = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Enable CORS for all routes and origins
-app.use(cors());
+// Explicit CORS setup allowing requests from the frontend
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Ensure this matches your frontend URL
+    credentials: true, // If you are using cookies/auth, enable this
+  })
+);
 
-// New API routes
-app.get("/api/plants/search", async (req, res) => {
-  try {
-    const { query } = req.query;
-    const results = await plantApiService.searchPlants(query);
-    res.json(results);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/api/plants/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const plant = await plantApiService.getPlantDetails(id);
-    res.json(plant);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Set up Apollo Server
+// Set up Apollo Server with debugging and logging
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+
   persistedQueries: {
     cache: "bounded",
   },
+
+  context: async ({ req }) => {
+    return {
+      models: { Post, Comment, User },
+    };
+  },
+  formatError: (err) => {
+    console.error("GraphQL Error:", err);
+    return err;
+  },
+  plugins: [
+    {
+      requestDidStart(requestContext) {
+        console.log("Request started:", requestContext.request.query);
+        return {
+          willSendResponse(requestContext) {
+            console.log("Response:", requestContext.response);
+          },
+        };
+      },
+    },
+  ],
+
 });
 
-// Create a new instance of an Apollo server with the GraphQL schema
 const startApolloServer = async () => {
   await server.start();
-  server.applyMiddleware({ app });
+  // Apply middleware to allow CORS in Apollo Server specifically
+  server.applyMiddleware({
+    app,
+    cors: {
+      origin: "http://localhost:3000", // Your client URL
+      credentials: true,
+    },
+  });
 
 if (process.env.NODE_ENV === "production") {
     console.log("Currently in production mode");
@@ -61,6 +79,11 @@ if (process.env.NODE_ENV === "production") {
 }
 
   db.once("open", () => {
+    // Add this debug query when the database connects
+    Post.find({}).then((posts) => {
+      console.log("Current posts in database:", posts);
+    });
+
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
       console.log(
@@ -70,5 +93,4 @@ if (process.env.NODE_ENV === "production") {
   });
 };
 
-// Call the async function to start the server
 startApolloServer();
