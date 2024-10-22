@@ -1,46 +1,63 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
-import { LOGIN_USER } from '../utils/mutations';
-import { Form, Button, Header, Segment } from 'semantic-ui-react';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { LOGIN_USER } from "../utils/mutations";
+import { Form, Button, Header, Segment, Message } from "semantic-ui-react";
+import Auth from "../utils/auth";
 
-import Auth from '../utils/auth';
-
-const Login = (props) => {
-  const [formData, setFormData] = useState({ 
-    email: '', 
-    password: '' 
+const Login = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
   });
-  const [login, { error, data }] = useMutation(LOGIN_USER);
+  const [error, setError] = useState("");
 
-  // submit form
+  const [login, { loading }] = useMutation(LOGIN_USER, {
+    onCompleted: (data) => {
+      const token = data.login.token;
+      Auth.login(token);
+      navigate("/profile");
+    },
+    onError: (error) => {
+      setError(error.message);
+    },
+  });
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const mutationResponse = await login({
-        variables: { email: formData.email, password: formData.password },
+      await login({
+        variables: {
+          email: formData.email,
+          password: formData.password,
+        },
       });
-      const token = mutationResponse.data.login.token;
-      Auth.login(token);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
-  
+
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevState) => ({
-     ...prevState,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
-  }
+  };
 
   return (
     <Segment padded="very">
       <Header as="h2" color="teal" textAlign="center">
         Log in to Plant Pals
       </Header>
-      <Form onSubmit={handleFormSubmit}>
+      {error && (
+        <Message negative>
+          <Message.Header>Login Error</Message.Header>
+          <p>{error}</p>
+        </Message>
+      )}
+      <Form onSubmit={handleFormSubmit} loading={loading}>
         <Form.Input
           fluid
           icon="mail"
@@ -69,16 +86,23 @@ const Login = (props) => {
           fluid
           size="large"
           type="submit"
-          style={{ backgroundColor: "#fb923c", color: "white" }} // Updated to orange
+          style={{ backgroundColor: "#fb923c", color: "white" }}
+          disabled={loading}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </Button>
       </Form>
-      <Button color="grey" fluid size="large" style={{ marginTop: "1em" }}>
+      <Button
+        as={Link}
+        to="/"
+        color="grey"
+        fluid
+        size="large"
+        style={{ marginTop: "1em" }}
+      >
         Cancel
       </Button>
-
-    <Link to='/signup'> Sign up here</Link> 
+      <Link to="/signup">Sign up here</Link>
     </Segment>
   );
 };
