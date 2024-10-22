@@ -17,7 +17,19 @@ self.addEventListener("activate", event => {
     });
 
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') {
+    if (event.request.method === 'GET' && (url.pathname.startsWith('/public') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css'))) {
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                    return cachedResponse || fetch(event.request).then((response) => {
+                        return caches.open('static-cache').then((cache) => {
+                            cache.put(event.request, response.clone());
+                            return response;
+                    });
+                });
+            })
+        );
+    } 
+    else if (event.request.method === 'POST' && url.pathname.startsWith('/graphql')) {
         event.respondWith(
             caches.open('gql-cache').then((cache) => {
                 return cache.match(event.request).then((cachedResponse) => {
@@ -31,8 +43,9 @@ self.addEventListener('fetch', (event) => {
                 });
             })
         );
-    } else {
-        event.respondWith(caches.match(event.request));
+    }
+    else {
+        event.respondWith(fetch(event.request));
     }
 });
 
@@ -64,8 +77,10 @@ self.addEventListener('fetch', (event) => {
 //   );
 
 self.addEventListener('push', (event) => {
+    console.log('Push event received:', event);
     const data = event.data.json();
 
+    console.log('Push data:', data);
     const options = {
         body: data.body,
         icon: "/public/images/icons/Plant_Pals_192.png",
@@ -77,9 +92,9 @@ self.addEventListener('push', (event) => {
     );
 });
 
-// self.addEventListener('notificationclick', (event) => {
-//     event.notifcation.close();
-//     event.waitUntil(
-//         self.clients.openWindow('http://localhost:3000')
-//     );
-// });
+self.addEventListener('notificationclick', (event) => {
+    event.notifcation.close();
+    event.waitUntil(
+        self.clients.openWindow('/profile')
+    );
+});
