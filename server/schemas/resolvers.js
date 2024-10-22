@@ -74,6 +74,18 @@ const resolvers = {
         throw new Error(`Failed to fetch plant data: ${error.message}`);
       }
     },
+// duplicate user query, may need to be implemented into line 57
+
+  /*  user: async (parent, args, context) => {
+      if (context.user) {
+          const user = await user.findById(context.user._id).populate({
+              path: 'plants',
+              populate: { path: 'user' }
+          });
+          return user;
+    }
+   throw AuthenticationError;
+  }, */ 
   },
 
   Mutation: {
@@ -114,6 +126,28 @@ const resolvers = {
         throw new Error("Error liking post. Please try again later.");
       }
     },
+// add validation
+    createUser: async (parent, args, context) => {
+      const user = await User.create(args);
+      const token = signToken(user);
+
+      return { user, token };
+
+    },
+
+    login: async (parent, { username, password }) => {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw AuthenticationError;
+      }
+      const validPw = await user.comparePassword(password);
+      if (!validPw) {
+        throw AuthenticationError;
+      }
+      const token = signToken(user);
+      return { user, token };
+    }
   },
 
   Post: {

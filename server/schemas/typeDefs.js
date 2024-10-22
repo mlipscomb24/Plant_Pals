@@ -63,6 +63,12 @@ const typeDefs = gql`
     userPosts(userId: ID!): [Post]
     getPostsByTag(tag: String!): [Post]
     getRecentPosts(limit: Int): [Post]
+    me: User
+  }
+
+  type Auth {
+  token: ID!
+  user: User
   }
 
   type Mutation {
@@ -72,6 +78,8 @@ const typeDefs = gql`
     createComment(input: CommentInput!): Comment
     deleteComment(id: ID!): Comment
     likePost(id: ID!): Post
+    signup(username: String!, email: String!, password: String!): Auth
+    login(email: String!, password: String!): Auth
   }
 `;
 
