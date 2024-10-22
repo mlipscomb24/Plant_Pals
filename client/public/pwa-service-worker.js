@@ -16,8 +16,25 @@ self.addEventListener("activate", event => {
     console.log("Service worker activating...");
     });
 
-// self.addEventListener('fetch', (event) => {
-//     const url = new URL(event.request.url);
+self.addEventListener('fetch', (event) => {
+    if (event.request.method !== 'GET') {
+        event.respondWith(
+            caches.open('gql-cache').then((cache) => {
+                return cache.match(event.request).then((cachedResponse) => {
+                    const fetchPromise = fetch(event.request).then((networkResponse) => {
+                        if (networkResponse.ok) {
+                            cache.put(event.request, networkResponse.clone());
+                        }
+                        return networkResponse;
+                    });
+                    return cachedResponse || fetchPromise;
+                });
+            })
+        );
+    } else {
+        event.respondWith(caches.match(event.request));
+    }
+});
 
 // // Cache procedure for plant api
 //     if (url.pathname.startsWith('/api/plants/search')) {
