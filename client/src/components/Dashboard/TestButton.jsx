@@ -3,6 +3,7 @@ import { Button } from 'semantic-ui-react';
 
 const TestButton = () => {
     const testPush = async () => {
+        setTimeout(async () => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
             try {
                 const registration = await navigator.serviceWorker.ready;
@@ -18,7 +19,8 @@ const TestButton = () => {
         } else {
             console.error('Push notifications are not supported.');
         }
-    };
+    }, 3000);
+};
     return (
         <Button onClick={testPush} color="blue">
             Notification Test
