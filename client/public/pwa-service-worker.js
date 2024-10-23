@@ -1,5 +1,5 @@
 // Installation
-const CACHE_VERSION = 'v0.1.0';
+const CACHE_VERSION = 'v0.3.0';
 self.addEventListener("install", event => {
     console.log("Service worker installing...");
     event.waitUntil(
@@ -16,6 +16,8 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
     console.log("Service worker activating...");
     });
+
+console.log('Service Worker Registration:', self.registration);
 
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
@@ -80,6 +82,7 @@ self.addEventListener('fetch', (event) => {
 //   );
 
 self.addEventListener('push', (event) => {
+    console.log(Notification.permission);  // Should be 'granted'
     console.log('Push event received:', event);
     const data = event.data.json();
 
@@ -96,7 +99,7 @@ self.addEventListener('push', (event) => {
 });
 
 self.addEventListener('notificationclick', (event) => {
-    event.notifcation.close();
+    event.notification.close();
     event.waitUntil(
         self.clients.openWindow('/profile')
     );
