@@ -44,7 +44,6 @@ const UserHeader = ({ user, gamificationStatus }) => {
               >
                 Notification Settings
               </Button>
-          <TestButton />
         </Grid.Column>
         <Grid.Column width={12}>
           <Header as="h2">{user.name}'s Plant Collection</Header>
@@ -66,6 +65,7 @@ const UserHeader = ({ user, gamificationStatus }) => {
         <Modal.Header>Notification Settings</Modal.Header>
         <Modal.Content>
           <NotificationButton />
+          <TestButton />
         </Modal.Content>
         <Modal.Actions>
           <Button

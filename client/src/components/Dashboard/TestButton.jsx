@@ -21,7 +21,7 @@ const TestButton = () => {
     };
     return (
         <Button onClick={testPush} color="blue">
-            Test Push
+            Notification Test
         </Button>
     );
 };
