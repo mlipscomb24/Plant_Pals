@@ -2,10 +2,10 @@ const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const path = require("path");
 const cors = require("cors");
-const { hourlyNotifCheck } = require("./services/notificationService");
 const cron = require("node-cron");
 const { typeDefs, resolvers } = require("./schemas");
 const db = require("./config/connection");
+const { retrieveUsers } = require('./utils/retrieveUsers');
 const { authMiddleware } = require("./utils/auth");
 const plantApiService = require("./services/plantApiService");
 require("dotenv").config();
@@ -32,6 +32,22 @@ app.use(
     credentials: true,
   })
 );
+
+const hourlyNotifCheck = async () => {
+    const users = await retrieveUsers();
+    const now = new Date();
+
+    users.forEach(user => {
+        const { notifications, subscription } = user;
+        if (notifDetermination(notifications, now)) {
+            const payload = JSON.stringify({
+                title: 'Plant Pals Notification',
+                body: 'Time to care for your plants!',
+            });
+            sendNotification(subscription, payload);
+        }
+    });
+};
 
 cron.schedule('0 * * * *', hourlyNotifCheck);
 
