@@ -1,44 +1,42 @@
 import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import CheckoutForm from "@stripe/react-stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
- 
+import DonationForm from "../components/Donations/DonationForm"; // Correct import path
 
 function Payment(props) {
-    const [stripePromise, setStripePromise] = useState(null);
-    const [clientSecret, setClientSecret] = useState("");
-    
-    useEffect(()=>{
-        fetch("/config").then(async (r) =>{
-            const {publishableKey } = await r.jason();
+  const [stripePromise, setStripePromise] = useState(null);
+  const [clientSecret, setClientSecret] = useState("");
 
-            setStripePromise(loadStripe(publishableKey));
-        });
-    },[]);
+  useEffect(() => {
+    // Fetch the Stripe publishable key from your server
+    fetch("/config").then(async (r) => {
+      const { publishableKey } = await r.json();
+      setStripePromise(loadStripe(publishableKey));
+    });
+  }, []);
 
-    useEffect(()=>{
-        fetch("/create-payment-intent",{
-          method: "POST",
-          body: JSON.stringify({}),
-       } ).then(async (r) =>{
-            const {clientSecret } = await r.jason();
+  useEffect(() => {
+    // Create a Payment Intent on the server
+    fetch("/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    }).then(async (r) => {
+      const { clientSecret } = await r.json();
+      setClientSecret(clientSecret);
+    });
+  }, []);
 
-            setClientSecret(clientSecret);
-        });
-    },[]);
+  return (
+    <>
+      <h1>Donations To Plant Pals</h1>
+      {stripePromise && clientSecret && (
+        <Elements stripe={stripePromise} options={{ clientSecret }}>
+          <DonationForm /> {/* Render your donation form */}
+        </Elements>
+      )}
+    </>
+  );
+}
 
-
-    return(
-     <>
-     <h1>Donations To Plant Pals </h1>
-     {stripePromise && clientSecret &&(
-        <Elements strpie={stripePromise} options={{clientSecret}}>
-      <CheckoutForm />   
-    </Elements> 
-     )}
-      
-     
-    </>)
-    }
-
-    export default Payment;
+export default Payment;

@@ -192,7 +192,7 @@ fieldset, input, select {
   border: 1px solid #efefef;
 }
 
-#payment-form {
+#donation-form {
   border: #F6F9FC solid 1px;
   border-radius: var(--radius);
   padding: 20px;
