@@ -17,6 +17,11 @@ const NotificationButton = () => {
         const registration = await navigator.serviceWorker.ready;
         // Retrieve the public VAPID key from the environment
         const publicKey = process.env.VAPID_KEY_PUBLIC;
+        // Log the public key
+        console.log('VAPID Public Key:', publicKey);
+        if (!publicKey) {
+            throw new Error('VAPID public key is missing.');
+        }
         // Convert the VAPID key to a UInt8Array
         const convertVapidKey = (publicKey) => {
             const padding = '='.repeat((4 - (publicKey.length % 4)) % 4);
