@@ -100,6 +100,12 @@ const typeDefs = gql`
     p256dh: String!
   }
 
+  # Response type for sub mutation
+  type SubscribeResponse {
+    success: Boolean!
+    message: String
+  }
+
   type Query {
     me: User
     plants: [Plant]
@@ -141,14 +147,7 @@ const typeDefs = gql`
     likePost(id: ID!): Post
 
     # Subscription Mutations
-    type Mutation {
-      subscribeUser(input: SubscriptionInput!): SubscribeResponse
-    }
-
-    # Response type for sub mutation
-    type SubscribeResponse {
-      success: Boolean!
-      message: String
+    subscribeUser(input: SubscriptionInput!): SubscribeResponse
     }
   }
 `;
