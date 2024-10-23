@@ -16,6 +16,7 @@ import { onError } from "@apollo/client/link/error";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Plantcare from "./pages/Plantcare";
+import Donation from "./pages/Donation";
 import PostDetail from "./pages/PostDetail";
 import Header from "./components/Header";
 import Signup from "./pages/Signup";
@@ -108,6 +109,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/donation" element={<Donation/>} />
 
           {/* Forum Routes */}
           <Route path="/plantcare" element={<Plantcare />} />

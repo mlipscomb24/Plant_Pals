@@ -1,6 +1,6 @@
 const plantApiService = require("../services/plantApiService");
 const { AuthenticationError } = require("apollo-server-express");
-const { Post, Comment, User } = require("../models");
+const { Post, Comment, User, Plant } = require("../models");
 const { signToken } = require("../utils/auth");
 
 const resolvers = {
@@ -16,7 +16,6 @@ const resolvers = {
           populate: ["author", "comments"],
         });
     },
-
     posts: async () => {
       try {
         const posts = await Post.find()
@@ -31,7 +30,6 @@ const resolvers = {
         throw new Error("Error fetching posts. Please try again later.");
       }
     },
-
     post: async (_, { id }) => {
       try {
         const post = await Post.findById(id).populate("author").populate({
@@ -44,7 +42,6 @@ const resolvers = {
         throw new Error("Error fetching post. Please try again later.");
       }
     },
-
     user: async (_, { username }) => {
       try {
         const user = await User.findOne({ username })
@@ -59,7 +56,6 @@ const resolvers = {
         throw new Error("Error fetching user data. Please try again later.");
       }
     },
-
     userPosts: async (_, { userId }) => {
       try {
         return await Post.find({ author: userId }).populate("author").populate({
@@ -70,19 +66,22 @@ const resolvers = {
         throw new Error("Error fetching user posts. Please try again later.");
       }
     },
-
     searchPlants: async (_, { searchTerm }) => {
       try {
         const plants = await plantApiService.searchPlants(searchTerm);
-        return plants;
+        const formattedPlants = plants.map((plant) => ({
+          ...plant,
+          species: Array.isArray(plant.species)
+            ? plant.species.join(", ")
+            : plant.species,
+        }));
+        return formattedPlants;
       } catch (error) {
         throw new Error(`Failed to fetch plant data: ${error.message}`);
       }
     },
   },
-
   Mutation: {
-    // Auth Mutations - THIS IS THE ONLY PART THAT CHANGES
     createUser: async (
       parent,
       { username, email, password, firstName, lastName }
@@ -101,23 +100,39 @@ const resolvers = {
         throw new Error("Error creating user: " + error.message);
       }
     },
-
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
       if (!user) {
         throw new AuthenticationError("Incorrect credentials");
       }
-
       const correctPw = await user.isCorrectPassword(password);
       if (!correctPw) {
         throw new AuthenticationError("Incorrect credentials");
       }
-
       const token = signToken(user);
       return { token, user };
     },
+    updateUserAvatar: async (_, { avatarUrl }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+      try {
+        const updatedUser = await User.findByIdAndUpdate(
+          context.user._id,
+          { avatar: avatarUrl },
+          { new: true }
+        )
+          .populate("plants")
+          .populate({
+            path: "posts",
+            populate: ["author", "comments"],
+          });
 
-    // Plant Mutations
+        return updatedUser;
+      } catch (error) {
+        throw new Error("Error updating avatar: " + error.message);
+      }
+    },
     addPlant: async (parent, { plantData }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
@@ -127,15 +142,18 @@ const resolvers = {
           ...plantData,
           user: context.user._id,
         });
-        await User.findByIdAndUpdate(context.user._id, {
-          $push: { plants: plant._id },
-        });
+        await User.findByIdAndUpdate(
+          context.user._id,
+          {
+            $push: { plants: plant._id },
+          },
+          { new: true }
+        );
         return plant;
       } catch (error) {
         throw new Error("Error adding plant: " + error.message);
       }
     },
-
     deletePlant: async (parent, { plantId }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
@@ -145,6 +163,9 @@ const resolvers = {
           _id: plantId,
           user: context.user._id,
         });
+        if (!plant) {
+          throw new Error("Plant not found or you're not the owner.");
+        }
         await User.findByIdAndUpdate(context.user._id, {
           $pull: { plants: plantId },
         });
@@ -153,8 +174,6 @@ const resolvers = {
         throw new Error("Error deleting plant: " + error.message);
       }
     },
-
-    // Post Mutations
     createPost: async (_, { input }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
@@ -169,14 +188,15 @@ const resolvers = {
         throw new Error("Error creating post. Please try again later.");
       }
     },
-
     createComment: async (_, { input }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
       }
+      console.log("Creating comment with input:", input);
       try {
         const comment = await Comment.create({
-          ...input,
+          content: input.content,
+          post: input.postId,
           author: context.user._id,
         });
         await Post.findByIdAndUpdate(input.postId, {
@@ -184,10 +204,10 @@ const resolvers = {
         });
         return await Comment.findById(comment._id).populate("author");
       } catch (error) {
+        console.error("Error creating comment:", error);
         throw new Error("Error creating comment. Please try again later.");
       }
     },
-
     likePost: async (_, { id }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
@@ -203,8 +223,6 @@ const resolvers = {
       }
     },
   },
-
-  // Type Resolvers
   Post: {
     author: (parent) => parent.author || { username: "Anonymous" },
     comments: (parent) => parent.comments || [],

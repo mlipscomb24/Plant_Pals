@@ -9,6 +9,7 @@ export const LOGIN_USER = gql`
         _id
         username
         email
+        avatar
       }
     }
   }
@@ -34,6 +35,7 @@ export const ADD_USER = gql`
         _id
         username
         email
+        avatar
       }
     }
   }
@@ -46,7 +48,7 @@ export const ADD_PLANT = gql`
       _id
       name
       species
-      waterReminder
+      waterFrequency
       sunlightNeeds
       image_url
     }
@@ -71,6 +73,7 @@ export const CREATE_POST = gql`
       author {
         _id
         username
+        avatar
       }
       createdAt
       likes
@@ -80,6 +83,7 @@ export const CREATE_POST = gql`
         content
         author {
           username
+          avatar
         }
         createdAt
       }
@@ -113,6 +117,7 @@ export const CREATE_COMMENT = gql`
       author {
         _id
         username
+        avatar
       }
       createdAt
     }
@@ -147,6 +152,18 @@ export const UPDATE_USER = gql`
       email
       firstName
       lastName
+      avatar
+    }
+  }
+`;
+
+// Avatar Mutation
+export const UPDATE_USER_AVATAR = gql`
+  mutation UpdateUserAvatar($avatarUrl: String!) {
+    updateUserAvatar(avatarUrl: $avatarUrl) {
+      _id
+      username
+      avatar
     }
   }
 `;
