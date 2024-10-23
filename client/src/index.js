@@ -13,9 +13,15 @@ import "semantic-ui-css/semantic.min.css";
 import "./custom.css";
 import App from "./App.jsx";
 
+// Determine the GraphQL endpoint based on the environment
+const gqlEndpoint =
+  process.env.NODE_ENV === "production"
+    ? "https://plant-pals.onrender.com/graphql"
+    : "http://localhost:3001/graphql";
+
 // Create an HTTP link
 const httpLink = createHttpLink({
-  uri: "http://localhost:3001/graphql", // Adjust this if your GraphQL endpoint is different
+  uri: gqlEndpoint, // Adjust this if your GraphQL endpoint is different
 });
 
 // Error handling link
@@ -29,11 +35,9 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
-// Authentication link (for future use)
+// Authentication link
 const authLink = setContext((_, { headers }) => {
-  // Get the authentication token from local storage if it exists
   const token = localStorage.getItem("token");
-  // Return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
@@ -42,10 +46,22 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// Create an Apollo Client instance
+// Create Apollo Client with all links properly chained
 const client = new ApolloClient({
-  uri: "http://localhost:3001/graphql",
+
+  uri: gqlEndpoint,
+  link: errorLink.concat(authLink.concat(httpLink)), // Chain the links together
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "network-only",
+      errorPolicy: "all",
+    },
+    query: {
+      fetchPolicy: "network-only",
+      errorPolicy: "all",
+    },
+  },
 });
 
 ReactDOM.render(
@@ -58,3 +74,8 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
+
+// Service worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register("/pwa-service-worker.js");
+}

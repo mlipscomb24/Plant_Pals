@@ -1,10 +1,14 @@
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const path = require("path");
-const cors = require("cors"); // Import CORS package
-const { typeDefs, resolvers } = require("./schemas"); // Correctly importing the index.js from schemas
+const cors = require("cors");
+const { typeDefs, resolvers } = require("./schemas");
 const db = require("./config/connection");
+const { authMiddleware } = require("./utils/auth");
 const plantApiService = require("./services/plantApiService");
+require("dotenv").config();
+
+const { Post, Comment, User } = require("./models");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -12,8 +16,13 @@ const PORT = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Enable CORS for all routes and origins
-app.use(cors());
+// Explicit CORS setup
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 // New API routes
 app.get("/api/plants/search", async (req, res) => {
@@ -76,17 +85,64 @@ app.post("/create-payment-intent", async (req, res) => {
 });
 
 // Set up Apollo Server
+// Updated Apollo Server with auth middleware
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  persistedQueries: {
+    cache: "bounded",
+  },
+  context: async ({ req }) => {
+    // Add auth middleware to context
+    const authContext = authMiddleware({ req });
+    return {
+      user: authContext.user,
+      models: { Post, Comment, User },
+    };
+  },
+  formatError: (err) => {
+    console.error("GraphQL Error:", err);
+    return err;
+  },
+  plugins: [
+    {
+      requestDidStart(requestContext) {
+        console.log("Request started:", requestContext.request.query);
+        return {
+          willSendResponse(requestContext) {
+            console.log("Response:", requestContext.response);
+          },
+        };
+      },
+    },
+  ],
 });
 
-// Create a new instance of an Apollo server with the GraphQL schema
 const startApolloServer = async () => {
   await server.start();
-  server.applyMiddleware({ app });
+
+  server.applyMiddleware({
+    app,
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true,
+    },
+  });
+
+  if (process.env.NODE_ENV === "production") {
+    console.log("Currently in production mode");
+    app.use(express.static(path.join(__dirname, "../client/build")));
+
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+    });
+  }
 
   db.once("open", () => {
+    Post.find({}).then((posts) => {
+      console.log("Current posts in database:", posts);
+    });
+
     app.listen(PORT, () => {
       console.log(`API server running on port ${PORT}!`);
       console.log(
@@ -96,5 +152,4 @@ const startApolloServer = async () => {
   });
 };
 
-// Call the async function to start the server
 startApolloServer();
