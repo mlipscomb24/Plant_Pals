@@ -1,13 +1,13 @@
 // Installation
-const CACHE_VERSION = 'v0.4.0';
+const CACHE_VERSION = 'v0.5.0';
 self.addEventListener("install", event => {
     console.log("Service worker installing...");
     event.waitUntil(
         caches.open(`static-cache-${CACHE_VERSION}`).then((cache) => {
             return cache.addAll([
                 '/',
-                '/public/images/icons/Plant_Pals_192.png',
-                '/public/images/icons/Plant_Pals_512.png',
+                '/images/icons/Plant_Pals_192.png',
+                '/images/icons/Plant_Pals_512.png',
             ]);
         })
     );
