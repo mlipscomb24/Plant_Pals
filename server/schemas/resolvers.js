@@ -202,26 +202,25 @@ const resolvers = {
         throw new Error("Error liking post. Please try again later.");
       }
     },
-  },
+    subscribeUser: async (_, { input }) => {
+      const { endpoint, keys } = input;
 
-  subscribeUser: async (_, { input }, context) => {
-    const { endpoint, keys } = input;
-
-    try {
-      console.log("Subscription data:", input);
-      return {
+      try {
+        console.log("Subscription data:", input);
+        return {
         success: true,
         message: 'Server received subscription successfully',
       };
-    } catch (error) {
-      console.error('Failed to subscribe the user:', error);
-      return {
-        success: false,
-        message: 'Failed to subscribe the user',
-      };
-    }
+      } catch (error) {
+        console.error('Failed to subscribe the user:', error);
+        return {
+          success: false,
+          message: 'Failed to subscribe the user',
+        };
+      }
     // Subscription logic
-  },
+    },
+    },
 
   // Type Resolvers
   Post: {
