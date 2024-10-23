@@ -1,78 +1,104 @@
 import React, { useState } from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import {
+  Grid,
+  Segment,
   Input,
+  Message,
   List,
   Image,
-  Segment,
-  Message,
   Button,
 } from "semantic-ui-react";
+import Auth from "../../utils/auth";
+import { SEARCH_PLANTS } from "../../utils/queries";
+import { ADD_PLANT } from "../../utils/mutations";
 
-// GraphQL query for plant search
-const SEARCH_PLANTS = gql`
-  query SearchPlants($searchTerm: String!) {
-    searchPlants(searchTerm: $searchTerm) {
-      _id
-      name
-      species
-      waterFrequency
-      sunlightNeeds
-      image_url
-    }
-  }
-`;
-
-const PlantSearch = ({ onSelectPlant }) => {
+const PlantSearch = ({ refetchUserPlants }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [addError, setAddError] = useState("");
 
-  // Execute the searchPlants query when the searchTerm changes
   const { loading, error, data } = useQuery(SEARCH_PLANTS, {
     variables: { searchTerm },
-    skip: searchTerm.length < 3, // Skip the query until the search term is long enough
+    skip: searchTerm.length < 3,
   });
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter" && searchTerm.length >= 3) {
-      // Manually trigger search if needed
+  const [addPlant] = useMutation(ADD_PLANT, {
+    onCompleted: () => refetchUserPlants(),
+    onError: (error) => setAddError(error.message),
+  });
+
+  const handleAddPlant = async (plant) => {
+    if (!Auth.loggedIn()) {
+      setAddError("Please log in to add plants");
+      return;
+    }
+
+    try {
+      await addPlant({
+        variables: {
+          plantData: {
+            name: plant.name,
+            species: plant.species,
+            waterFrequency: plant.waterFrequency,
+            sunlightNeeds: plant.sunlightNeeds,
+            image_url: plant.image_url,
+          },
+        },
+      });
+    } catch (err) {
+      console.error("Error adding plant:", err);
+      setAddError("Failed to add plant. Please try again.");
     }
   };
 
   return (
     <Segment>
       <Input
-        placeholder="Search plants..."
+        fluid
+        placeholder="Search plants (minimum 3 characters)..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        onKeyPress={handleKeyPress}
-        action={{
-          icon: "search",
-          loading: loading,
-          disabled: loading,
-        }}
+        icon="search"
+        loading={loading}
       />
       {error && (
-        <Message negative>
-          <Message.Header>Error</Message.Header>
-          <p>{error.message}</p>
-        </Message>
+        <Message negative header="Search Error" content={error.message} />
+      )}
+      {addError && (
+        <Message negative header="Add Plant Error" content={addError} />
       )}
       {data?.searchPlants?.length > 0 && (
-        <List divided relaxed style={{ marginTop: "20px" }}>
+        <List divided relaxed>
           {data.searchPlants.map((plant) => (
-            <List.Item key={plant._id}>
-              <Image avatar src={plant.image_url || "/placeholder-plant.jpg"} />
-              <List.Content>
-                <List.Header>{plant.name}</List.Header>
-                <List.Description>{plant.species}</List.Description>
-              </List.Content>
-              <Button
-                primary
-                floated="right"
-                onClick={() => onSelectPlant(plant)}
-              >
-                Add Plant
-              </Button>
+            <List.Item key={plant._id || plant.name}>
+              <Grid>
+                <Grid.Column width={2}>
+                  <Image
+                    avatar
+                    src={plant.image_url || "/placeholder-plant.jpg"}
+                  />
+                </Grid.Column>
+                <Grid.Column width={10}>
+                  <List.Content>
+                    <List.Header>{plant.name}</List.Header>
+                    <List.Description>{plant.species}</List.Description>
+                    <List.Description>
+                      Water: {plant.waterFrequency || "Not specified"}
+                      <br />
+                      Sunlight: {plant.sunlightNeeds || "Not specified"}
+                    </List.Description>
+                  </List.Content>
+                </Grid.Column>
+                <Grid.Column width={4} textAlign="right">
+                  <Button
+                    primary
+                    onClick={() => handleAddPlant(plant)}
+                    disabled={!Auth.loggedIn()}
+                  >
+                    Add Plant
+                  </Button>
+                </Grid.Column>
+              </Grid>
             </List.Item>
           ))}
         </List>
