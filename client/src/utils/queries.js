@@ -7,8 +7,8 @@ export const GLOBAL_LOADING_QUERY = gql`
   }
 `;
 
-// Keep existing fragments
-const PLANT_FIELDS = gql`
+// Fragment for Plant fields
+export const PLANT_FIELDS = gql`
   fragment PlantFields on Plant {
     _id
     name
@@ -19,7 +19,8 @@ const PLANT_FIELDS = gql`
   }
 `;
 
-const POST_FIELDS = gql`
+// Updated Post fields fragment with avatar
+export const POST_FIELDS = gql`
   fragment PostFields on Post {
     _id
     title
@@ -28,12 +29,14 @@ const POST_FIELDS = gql`
     author {
       _id
       username
+      avatar
     }
     comments {
       _id
       content
       author {
         username
+        avatar
       }
       createdAt
     }
@@ -42,7 +45,8 @@ const POST_FIELDS = gql`
   }
 `;
 
-const COMMENT_FIELDS = gql`
+// Updated Comment fields fragment with avatar
+export const COMMENT_FIELDS = gql`
   fragment CommentFields on Comment {
     _id
     content
@@ -50,17 +54,19 @@ const COMMENT_FIELDS = gql`
     author {
       _id
       username
+      avatar
     }
   }
 `;
 
-// Updated ME query with all necessary fields
+// Updated ME query with avatar
 export const GET_ME = gql`
   query me {
     me {
       _id
       username
       email
+      avatar
       plants {
         ...PlantFields
       }
@@ -70,6 +76,19 @@ export const GET_ME = gql`
       comments {
         ...CommentFields
       }
+      gamification {
+        currentTier
+        badges {
+          id
+          name
+          description
+        }
+      }
+      forumActivity {
+        totalPosts
+        totalComments
+        helpfulResponses
+      }
     }
   }
   ${PLANT_FIELDS}
@@ -77,7 +96,21 @@ export const GET_ME = gql`
   ${COMMENT_FIELDS}
 `;
 
-// Keep existing plant-related queries
+// Search Plants query remains the same
+export const SEARCH_PLANTS = gql`
+  query SearchPlants($searchTerm: String!) {
+    searchPlants(searchTerm: $searchTerm) {
+      _id
+      name
+      species
+      waterFrequency
+      sunlightNeeds
+      image_url
+    }
+  }
+`;
+
+// Get all Plants query remains the same
 export const GET_PLANTS = gql`
   query getPlants {
     plants {
@@ -87,22 +120,14 @@ export const GET_PLANTS = gql`
   ${PLANT_FIELDS}
 `;
 
-export const SEARCH_PLANTS = gql`
-  query searchPlants($searchTerm: String!) {
-    searchPlants(searchTerm: $searchTerm) {
-      ...PlantFields
-    }
-  }
-  ${PLANT_FIELDS}
-`;
-
-// Updated user query
+// Updated Get User query with avatar
 export const GET_USER = gql`
   query getUser($username: String!) {
     user(username: $username) {
       _id
       username
       email
+      avatar
       plants {
         ...PlantFields
       }
@@ -112,6 +137,19 @@ export const GET_USER = gql`
       comments {
         ...CommentFields
       }
+      gamification {
+        currentTier
+        badges {
+          id
+          name
+          description
+        }
+      }
+      forumActivity {
+        totalPosts
+        totalComments
+        helpfulResponses
+      }
     }
   }
   ${PLANT_FIELDS}
@@ -119,7 +157,7 @@ export const GET_USER = gql`
   ${COMMENT_FIELDS}
 `;
 
-// Forum queries
+// Forum Queries remain the same as they use updated fragments
 export const GET_POSTS = gql`
   query GetPosts {
     posts {
@@ -147,11 +185,13 @@ export const GET_USER_POSTS = gql`
   ${POST_FIELDS}
 `;
 
+// Updated Query Users with avatar
 export const QUERY_USERS = gql`
   query allUsers {
     users {
       _id
       username
+      avatar
       plants {
         ...PlantFields
       }
@@ -160,11 +200,13 @@ export const QUERY_USERS = gql`
   ${PLANT_FIELDS}
 `;
 
+// Updated Single User query with avatar
 export const QUERY_SINGLE_USER = gql`
   query singleUser($userId: ID!) {
     user(userId: $userId) {
       _id
       username
+      avatar
       plants {
         ...PlantFields
       }

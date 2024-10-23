@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema(
       required: true,
       minlength: 5,
     },
+    avatar: {
+      type: String,
+      default: `https://api.dicebear.com/7.x/avataaars/svg?seed=default`,
+    },
     gamification: {
       currentTier: {
         type: String,
@@ -39,7 +43,6 @@ const UserSchema = new mongoose.Schema(
         ref: "Plant",
       },
     ],
-    // Forum-related fields
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -160,6 +163,7 @@ UserSchema.methods.toAuthJSON = function () {
     _id: this._id,
     username: this.username,
     email: this.email,
+    avatar: this.avatar,
     gamification: this.gamification,
     plants: this.plants,
     forumActivity: this.forumActivity,

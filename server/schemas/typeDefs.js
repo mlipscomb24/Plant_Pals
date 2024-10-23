@@ -16,6 +16,7 @@ const typeDefs = gql`
     email: String
     firstName: String
     lastName: String
+    avatar: String
     plants: [Plant]
     posts: [Post]
     comments: [Comment]
@@ -148,6 +149,8 @@ const typeDefs = gql`
 
     # Subscription Mutations
     subscribeUser(input: SubscriptionInput!): SubscribeResponse
+    # Profile Mutations
+    updateUserAvatar(avatarUrl: String!): User
   }
 `;
 
