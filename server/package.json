@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node server.js",
+    "watch": "nodemon server.js"
     "watch": "nodemon server.js",
     "seed": "node seeds/forumSeeds.js"
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
+    "@stripe/react-stripe-js": "^2.8.1",
+    "@stripe/stripe-js": "^4.9.0",
     "apollo-server-express": "^3.13.0",
     "axios": "^0.21.1",
     "bcrypt": "^5.1.1",
