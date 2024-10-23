@@ -1,8 +1,9 @@
 // Installation
+const CACHE_VERSION = 'v2';
 self.addEventListener("install", event => {
     console.log("Service worker installing...");
     event.waitUntil(
-        caches.open('static-cache').then((cache) => {
+        caches.open(`static-cache-${CACHE_VERSION}`).then((cache) => {
             return cache.addAll([
                 '/',
                 '/public/images/icons/Plant_Pals_192.png',
