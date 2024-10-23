@@ -45,7 +45,7 @@ const NotificationButton = () => {
                 p256dh: subscription.toJSON().keys.p256dh,
             },
         };
-
+        console.log('Subscription data:', subscriptionData);
         const response = await fetch('/graphql', {
                 method: 'POST',
                 headers: {
