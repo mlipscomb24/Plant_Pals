@@ -1,5 +1,5 @@
 // Installation
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 self.addEventListener("install", event => {
     console.log("Service worker installing...");
     event.waitUntil(
