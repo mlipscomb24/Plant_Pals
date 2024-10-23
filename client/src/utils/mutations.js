@@ -46,7 +46,7 @@ export const ADD_PLANT = gql`
       _id
       name
       species
-      waterReminder
+      waterFrequency
       sunlightNeeds
       image_url
     }

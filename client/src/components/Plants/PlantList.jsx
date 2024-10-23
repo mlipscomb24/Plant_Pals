@@ -1,8 +1,8 @@
 import React from "react";
-import { Card, Message, Button } from "semantic-ui-react";
+import { Card, Message } from "semantic-ui-react";
 import PlantCard from "./PlantCard";
 
-const PlantList = ({ plants, onAddPlant, onDeletePlant }) => {
+const PlantList = ({ plants, onDeletePlant }) => {
   if (plants.length === 0) {
     return <Message info>No plants to display</Message>;
   }
@@ -14,10 +14,7 @@ const PlantList = ({ plants, onAddPlant, onDeletePlant }) => {
           <PlantCard
             key={plant._id}
             plant={plant}
-            onAction={onAddPlant ? () => onAddPlant(plant) : null}
-            actionText={onAddPlant ? "Add Plant" : null}
-            actionColor={onAddPlant ? "green" : null}
-            onDelete={onDeletePlant ? () => onDeletePlant(plant) : null}
+            onDelete={() => onDeletePlant(plant)} // Use onDeletePlant prop
           />
         ))}
       </Card.Group>

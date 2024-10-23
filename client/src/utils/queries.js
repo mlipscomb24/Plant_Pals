@@ -7,8 +7,8 @@ export const GLOBAL_LOADING_QUERY = gql`
   }
 `;
 
-// Keep existing fragments
-const PLANT_FIELDS = gql`
+// Fragment for Plant fields (Avoid duplicating fragment)
+export const PLANT_FIELDS = gql`
   fragment PlantFields on Plant {
     _id
     name
@@ -19,7 +19,8 @@ const PLANT_FIELDS = gql`
   }
 `;
 
-const POST_FIELDS = gql`
+// Fragment for Post fields
+export const POST_FIELDS = gql`
   fragment PostFields on Post {
     _id
     title
@@ -42,7 +43,8 @@ const POST_FIELDS = gql`
   }
 `;
 
-const COMMENT_FIELDS = gql`
+// Fragment for Comment fields
+export const COMMENT_FIELDS = gql`
   fragment CommentFields on Comment {
     _id
     content
@@ -77,7 +79,21 @@ export const GET_ME = gql`
   ${COMMENT_FIELDS}
 `;
 
-// Keep existing plant-related queries
+// Search Plants query
+export const SEARCH_PLANTS = gql`
+  query SearchPlants($searchTerm: String!) {
+    searchPlants(searchTerm: $searchTerm) {
+      _id
+      name
+      species
+      waterFrequency
+      sunlightNeeds
+      image_url
+    }
+  }
+`;
+
+// Get all Plants query using the Plant fields fragment
 export const GET_PLANTS = gql`
   query getPlants {
     plants {
@@ -87,16 +103,7 @@ export const GET_PLANTS = gql`
   ${PLANT_FIELDS}
 `;
 
-export const SEARCH_PLANTS = gql`
-  query searchPlants($searchTerm: String!) {
-    searchPlants(searchTerm: $searchTerm) {
-      ...PlantFields
-    }
-  }
-  ${PLANT_FIELDS}
-`;
-
-// Updated user query
+// Get User by Username query
 export const GET_USER = gql`
   query getUser($username: String!) {
     user(username: $username) {
@@ -119,7 +126,7 @@ export const GET_USER = gql`
   ${COMMENT_FIELDS}
 `;
 
-// Forum queries
+// Forum Queries
 export const GET_POSTS = gql`
   query GetPosts {
     posts {
@@ -147,6 +154,7 @@ export const GET_USER_POSTS = gql`
   ${POST_FIELDS}
 `;
 
+// Get all Users query
 export const QUERY_USERS = gql`
   query allUsers {
     users {
@@ -160,6 +168,7 @@ export const QUERY_USERS = gql`
   ${PLANT_FIELDS}
 `;
 
+// Get a single User by ID query
 export const QUERY_SINGLE_USER = gql`
   query singleUser($userId: ID!) {
     user(userId: $userId) {
