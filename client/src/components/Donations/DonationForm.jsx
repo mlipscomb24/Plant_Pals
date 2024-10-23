@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
-
-export default function DonationForm() {
+// position change
+const DonationForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState(null);
@@ -49,3 +49,5 @@ export default function DonationForm() {
     </form>
   );
 }
+
+export default DonationForm;
