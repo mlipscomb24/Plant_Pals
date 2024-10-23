@@ -16,7 +16,7 @@ const NotificationButton = () => {
         // Confirm sw registered
         const registration = await navigator.serviceWorker.ready;
         // Retrieve the public VAPID key from the environment
-        const publicKey = process.env.VAPID_KEY_PUBLIC;
+        const publicKey = process.env.VAPID_PUBLIC_KEY;
         // Log the public key
         console.log('VAPID Public Key:', publicKey);
         if (!publicKey) {
