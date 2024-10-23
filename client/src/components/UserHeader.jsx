@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import InstallButton from "../components/Dashboard/InstallButton";
 import NotificationButton from "../components/Dashboard/NotificationButton";
 import TestButton from "../components/Dashboard/TestButton";
 import { Button, Segment, Grid, Image, Header, Modal } from "semantic-ui-react";
@@ -44,6 +45,7 @@ const UserHeader = ({ user, gamificationStatus }) => {
               >
                 Notification Settings
               </Button>
+
         </Grid.Column>
         <Grid.Column width={12}>
           <Header as="h2">{user.name}'s Plant Collection</Header>
@@ -65,6 +67,7 @@ const UserHeader = ({ user, gamificationStatus }) => {
         <Modal.Header>Notification Settings</Modal.Header>
         <Modal.Content>
           <NotificationButton />
+          <InstallButton />
           <TestButton />
         </Modal.Content>
         <Modal.Actions>
