@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import DonationForm from "../components/Donations/DonationForm"; // Correct import path
+import DonationForm from "../Donations/DonationForm"; // Correct import path
 
 function Payment(props) {
   const [stripePromise, setStripePromise] = useState(null);
