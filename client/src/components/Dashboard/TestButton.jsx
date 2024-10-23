@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button } from 'semantic-ui-react';
+
 const TestButton = () => {
     const testPush = async () => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -18,9 +20,9 @@ const TestButton = () => {
         }
     };
     return (
-        <button onClick={testPush}>
+        <Button onClick={testPush} color="blue">
             Test Push
-        </button>
+        </Button>
     );
 };
 

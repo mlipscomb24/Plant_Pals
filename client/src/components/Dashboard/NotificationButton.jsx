@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'semantic-ui-react';
 
 const NotificationButton = () => {
 
@@ -84,9 +85,9 @@ const NotificationButton = () => {
     };
 
     return (
-        <button onClick={requestNotificationPermission}>
+        <Button onClick={requestNotificationPermission} color="green">
             Enable Notifications
-        </button>
+        </Button>
     );
 };
 

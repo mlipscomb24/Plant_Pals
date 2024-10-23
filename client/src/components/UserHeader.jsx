@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import NotificationButton from "../components/Dashboard/NotificationButton";
 import TestButton from "../components/Dashboard/TestButton";
-import { Button, Segment, Grid, Image, Header } from "semantic-ui-react";
+import { Button, Segment, Grid, Image, Header, Modal } from "semantic-ui-react";
 
 const UserHeader = ({ user, gamificationStatus }) => {
   const { currentTier, plantCount } = gamificationStatus || {
     currentTier: "Seedling",
     plantCount: 0,
-  };
+  }
+  const [notifModalOpen, setNotifModalOpen] = useState(false);
+  ;
 
  const getTierImage = (tier) => {
    switch (tier) {
@@ -32,12 +34,17 @@ const UserHeader = ({ user, gamificationStatus }) => {
       <Grid columns={2}>
         <Grid.Column width={4}>
           <Image src={user.avatar} size="small" circular />
-          <Button color ="green">
-          <NotificationButton />
-          </Button>
-          <Button color ="blue">
+              <Button
+                onClick={() => setNotifModalOpen(true)}
+                size="large"
+                style={{
+                  backgroundColor: "#7dd3fc",
+                  color: "white",
+                }}
+              >
+                Notification Settings
+              </Button>
           <TestButton />
-          </Button>
         </Grid.Column>
         <Grid.Column width={12}>
           <Header as="h2">{user.name}'s Plant Collection</Header>
@@ -49,7 +56,29 @@ const UserHeader = ({ user, gamificationStatus }) => {
           </Segment>
         </Grid.Column>
       </Grid>
+
+      <Modal
+        open={notifModalOpen}
+        onClose={() => setNotifModalOpen(false)}
+        size="small"
+        style={{ borderRadius: "10px" }} // Rounded corners
+      >
+        <Modal.Header>Notification Settings</Modal.Header>
+        <Modal.Content>
+          <NotificationButton />
+        </Modal.Content>
+        <Modal.Actions>
+          <Button
+            onClick={() => setNotifModalOpen(false)}
+            style={{ backgroundColor: "#38a169", color: "white" }}
+          >
+            Close
+          </Button>
+        </Modal.Actions>
+      </Modal>
+
     </Segment>
+
   );
 };
 
