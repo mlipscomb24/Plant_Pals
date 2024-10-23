@@ -112,6 +112,27 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
+    updateUserAvatar: async (_, { avatarUrl }, context) => {
+      if (!context.user) {
+        throw new AuthenticationError("You need to be logged in!");
+      }
+      try {
+        const updatedUser = await User.findByIdAndUpdate(
+          context.user._id,
+          { avatar: avatarUrl },
+          { new: true }
+        )
+          .populate("plants")
+          .populate({
+            path: "posts",
+            populate: ["author", "comments"],
+          });
+
+        return updatedUser;
+      } catch (error) {
+        throw new Error("Error updating avatar: " + error.message);
+      }
+    },
     addPlant: async (parent, { plantData }, context) => {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
@@ -119,12 +140,12 @@ const resolvers = {
       try {
         const plant = await Plant.create({
           ...plantData,
-          user: context.user._id, // Associate the plant with the current user
+          user: context.user._id,
         });
         await User.findByIdAndUpdate(
           context.user._id,
           {
-            $push: { plants: plant._id }, // Add the plant to the user's plants array
+            $push: { plants: plant._id },
           },
           { new: true }
         );
@@ -140,7 +161,7 @@ const resolvers = {
       try {
         const plant = await Plant.findOneAndDelete({
           _id: plantId,
-          user: context.user._id, // Ensure only the plant's owner can delete it
+          user: context.user._id,
         });
         if (!plant) {
           throw new Error("Plant not found or you're not the owner.");
@@ -171,7 +192,7 @@ const resolvers = {
       if (!context.user) {
         throw new AuthenticationError("You need to be logged in!");
       }
-      console.log("Creating comment with input:", input); // Debugging log
+      console.log("Creating comment with input:", input);
       try {
         const comment = await Comment.create({
           content: input.content,
@@ -183,7 +204,7 @@ const resolvers = {
         });
         return await Comment.findById(comment._id).populate("author");
       } catch (error) {
-        console.error("Error creating comment:", error); // Debugging log
+        console.error("Error creating comment:", error);
         throw new Error("Error creating comment. Please try again later.");
       }
     },

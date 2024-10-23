@@ -16,6 +16,7 @@ const typeDefs = gql`
     email: String
     firstName: String
     lastName: String
+    avatar: String
     plants: [Plant]
     posts: [Post]
     comments: [Comment]
@@ -128,6 +129,9 @@ const typeDefs = gql`
 
     # Social Mutations
     likePost(id: ID!): Post
+
+    # Profile Mutations
+    updateUserAvatar(avatarUrl: String!): User
   }
 `;
 

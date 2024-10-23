@@ -1,8 +1,8 @@
 import React from "react";
 import NotificationButton from "../components/Dashboard/NotificationButton";
-import { Segment, Grid, Image, Header } from "semantic-ui-react";
+import { Segment, Grid, Image, Header, Button } from "semantic-ui-react";
 
-const UserHeader = ({ user, gamificationStatus }) => {
+const UserHeader = ({ user, gamificationStatus, onGenerateAvatar }) => {
   const { currentTier, plantCount } = gamificationStatus || {
     currentTier: "Seedling",
     plantCount: 0,
@@ -35,11 +35,29 @@ const UserHeader = ({ user, gamificationStatus }) => {
       <Grid columns={2}>
         <Grid.Column width={4}>
           <Image
-            src={user.avatar || "/images/default-avatar.jpg"}
+            src={user.avatar || "https://api.dicebear.com/7.x/avataaars/svg"}
             size="small"
             circular
           />
-          <NotificationButton />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              marginTop: "1rem",
+            }}
+          >
+            <NotificationButton />
+            <Button
+              onClick={onGenerateAvatar}
+              style={{
+                backgroundColor: "#38a169",
+                color: "white",
+              }}
+            >
+              Generate New Avatar
+            </Button>
+          </div>
         </Grid.Column>
         <Grid.Column width={12}>
           <Header as="h2">{userName}'s Plant Collection</Header>
