@@ -73,16 +73,13 @@ const UserSchema = new mongoose.Schema(
       time: {
         type: [String],
         enum: ["Morning", "Noon", "Evening"],
-        required: true,
       },
       dayOfWeek: {
         type: [String],
         enum: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        required: true,
       },
       subscription: {
         type: Object,
-        required: true,
       }
     }
   },

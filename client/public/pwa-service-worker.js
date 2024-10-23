@@ -18,6 +18,8 @@ self.addEventListener("activate", event => {
     });
 
 self.addEventListener('fetch', (event) => {
+    const url = new URL(event.request.url);
+
     if (event.request.method === 'GET' && (url.pathname.startsWith('/public') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css'))) {
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {
