@@ -1,5 +1,5 @@
 // Installation
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v5';
 self.addEventListener("install", event => {
     console.log("Service worker installing...");
     event.waitUntil(
@@ -24,7 +24,7 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {
                     return cachedResponse || fetch(event.request).then((response) => {
-                        return caches.open('static-cache').then((cache) => {
+                        return caches.open(`static-cache-${CACHE_VERSION}`).then((cache) => {
                             cache.put(event.request, response.clone());
                             return response;
                     });
@@ -33,19 +33,19 @@ self.addEventListener('fetch', (event) => {
         );
     } 
     else if (event.request.method === 'POST' && url.pathname.startsWith('/graphql')) {
-        event.respondWith(
-            caches.open('gql-cache').then((cache) => {
-                return cache.match(event.request).then((cachedResponse) => {
-                    const fetchPromise = fetch(event.request).then((networkResponse) => {
-                        if (networkResponse.ok) {
-                            cache.put(event.request, networkResponse.clone());
-                        }
-                        return networkResponse;
-                    });
-                    return cachedResponse || fetchPromise;
-                });
-            })
-        );
+        event.respondWith(fetch(event.request));
+        //     caches.open('gql-cache').then((cache) => {
+        //         return cache.match(event.request).then((cachedResponse) => {
+        //             const fetchPromise = fetch(event.request).then((networkResponse) => {
+        //                 if (networkResponse.ok) {
+        //                     cache.put(event.request, networkResponse.clone());
+        //                 }
+        //                 return networkResponse;
+        //             });
+        //             return cachedResponse || fetchPromise;
+        //         });
+        //     })
+        // );
     }
     else {
         event.respondWith(fetch(event.request));

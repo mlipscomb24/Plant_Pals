@@ -18,7 +18,13 @@ const NotificationButton = () => {
         // Retrieve the public VAPID key from the environment
         const publicKey = process.env.VAPID_KEY_PUBLIC;
         // Convert the VAPID key to a UInt8Array
-        const convertedVapidKey = Uint8Array.from(atob(publicKey), c => c.charCodeAt(0));
+        const convertVapidKey = (publicKey) => {
+            const padding = '='.repeat((4 - (publicKey.length % 4)) % 4);
+            const base64 = (publicKey + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+        };
+        const convertedVapidKey = convertVapidKey(publicKey);
 
         // Subscribe the user to push notifications
         const subscription = await registration.pushManager.subscribe({
