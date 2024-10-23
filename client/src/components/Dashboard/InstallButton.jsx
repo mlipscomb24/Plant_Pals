@@ -46,7 +46,7 @@ const InstallButton = () => {
             {!isInstalled && (
             <Button
                 onClick={handleInstall}
-                disabled={!isInstalled}
+                disabled={isInstalled}
             >
             Install Plant Pals
             </Button>
