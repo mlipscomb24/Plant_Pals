@@ -89,8 +89,8 @@ self.addEventListener('push', (event) => {
     console.log('Push data:', data);
     const options = {
         body: data.body,
-        icon: "/public/images/icons/Plant_Pals_192.png",
-        badge: "/public/images/icons/Plant_Pals_192.png",
+        icon: "/images/icons/Plant_Pals_192.png",
+        badge: "/images/icons/Plant_Pals_192.png",
     };
 
     event.waitUntil(
