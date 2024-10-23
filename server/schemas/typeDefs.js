@@ -148,7 +148,6 @@ const typeDefs = gql`
 
     # Subscription Mutations
     subscribeUser(input: SubscriptionInput!): SubscribeResponse
-    }
   }
 `;
 
