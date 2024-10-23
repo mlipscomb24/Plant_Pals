@@ -27,4 +27,4 @@ db.once("open", () => {
   });
 });
 
-module.exports = db;
+module.exports = { db, getDb };
