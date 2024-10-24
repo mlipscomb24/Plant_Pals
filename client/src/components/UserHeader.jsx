@@ -51,7 +51,16 @@ const UserHeader = ({ user, gamificationStatus, onGenerateAvatar }) => {
               marginTop: "1rem",
             }}
           >
-            <NotificationButton />
+              <Button
+                onClick={() => setNotifModalOpen(true)}
+                size="large"
+                style={{
+                  backgroundColor: "#7dd3fc",
+                  color: "white",
+                }}
+              >
+                Notification Settings
+              </Button>
             <Button
               onClick={onGenerateAvatar}
               style={{
