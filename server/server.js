@@ -1,6 +1,6 @@
+const path = require("path");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
-const path = require("path");
 const cors = require("cors");
 const cron = require("node-cron");
 const { typeDefs, resolvers } = require("./schemas");
@@ -63,8 +63,8 @@ app.use(express.static(process.env.STATIC_DIR));
 
 //   rontend index.html file for the root route
 app.get("/", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/index.html");
-  res.sendFile(path);
+  const filePath = path.resolve(process.env.STATIC_DIR + "/index.html");
+  res.sendFile(filePath);
 });
 
 // Get the Stripe publishable key from environment variables
