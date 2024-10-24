@@ -61,11 +61,11 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
 
 app.use(express.static(process.env.STATIC_DIR));
 
-//   rontend index.html file for the root route
-app.get("/", (req, res) => {
-  const filePath = path.resolve(process.env.STATIC_DIR + "/index.html");
-  res.sendFile(filePath);
-});
+// //   rontend index.html file for the root route
+// app.get("/", (req, res) => {
+//   const filePath = path.resolve(process.env.STATIC_DIR + "/index.html");
+//   res.sendFile(filePath);
+// });
 
 // Get the Stripe publishable key from environment variables
 app.get("/config", (req, res) => {
