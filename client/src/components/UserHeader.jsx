@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+import InstallButton from "../components/Dashboard/InstallButton";
 import NotificationButton from "../components/Dashboard/NotificationButton";
-import { Segment, Grid, Image, Header, Button } from "semantic-ui-react";
+import TestButton from "../components/Dashboard/TestButton";
+import { Button, Segment, Grid, Image, Header, Modal } from "semantic-ui-react";
 
 const UserHeader = ({ user, gamificationStatus, onGenerateAvatar }) => {
   const { currentTier, plantCount } = gamificationStatus || {
     currentTier: "Seedling",
     plantCount: 0,
-  };
+  }
+  const [notifModalOpen, setNotifModalOpen] = useState(false);
+  ;
 
   const getTierImage = (tier) => {
     switch (tier) {
@@ -47,7 +51,16 @@ const UserHeader = ({ user, gamificationStatus, onGenerateAvatar }) => {
               marginTop: "1rem",
             }}
           >
-            <NotificationButton />
+              <Button
+                onClick={() => setNotifModalOpen(true)}
+                size="large"
+                style={{
+                  backgroundColor: "#7dd3fc",
+                  color: "white",
+                }}
+              >
+                Notification Settings
+              </Button>
             <Button
               onClick={onGenerateAvatar}
               style={{
@@ -69,7 +82,31 @@ const UserHeader = ({ user, gamificationStatus, onGenerateAvatar }) => {
           </Segment>
         </Grid.Column>
       </Grid>
+
+      <Modal
+        open={notifModalOpen}
+        onClose={() => setNotifModalOpen(false)}
+        size="small"
+        style={{ borderRadius: "10px" }} // Rounded corners
+      >
+        <Modal.Header>Notification Settings</Modal.Header>
+        <Modal.Content>
+          <NotificationButton />
+          <InstallButton />
+          <TestButton />
+        </Modal.Content>
+        <Modal.Actions>
+          <Button
+            onClick={() => setNotifModalOpen(false)}
+            style={{ backgroundColor: "#38a169", color: "white" }}
+          >
+            Close
+          </Button>
+        </Modal.Actions>
+      </Modal>
+
     </Segment>
+
   );
 };
 

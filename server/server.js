@@ -1,17 +1,26 @@
+const path = require("path");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
-const path = require("path");
 const cors = require("cors");
+const cron = require("node-cron");
 const { typeDefs, resolvers } = require("./schemas");
 const db = require("./config/connection");
+const { retrieveUsers } = require('./utils/retrieveUsers');
 const { authMiddleware } = require("./utils/auth");
 const plantApiService = require("./services/plantApiService");
 require("dotenv").config();
 
 const { Post, Comment, User } = require("./models");
+const webPush = require("web-push");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+webPush.setVapidDetails(
+  'mailto:ddunnemann@gmail.com',
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -52,11 +61,11 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY, {
 
 app.use(express.static(process.env.STATIC_DIR));
 
-//   rontend index.html file for the root route
-app.get("/", (req, res) => {
-  const path = resolve(process.env.STATIC_DIR + "/index.html");
-  res.sendFile(path);
-});
+// //   rontend index.html file for the root route
+// app.get("/", (req, res) => {
+//   const filePath = path.resolve(process.env.STATIC_DIR + "/index.html");
+//   res.sendFile(filePath);
+// });
 
 // Get the Stripe publishable key from environment variables
 app.get("/config", (req, res) => {
@@ -94,7 +103,25 @@ app.post("/create-payment-intent", async (req, res) => {
 });
 
 // Set up Apollo Server
-// Updated Apollo Server with auth middleware
+const hourlyNotifCheck = async () => {
+    const users = await retrieveUsers();
+    const now = new Date();
+
+    users.forEach(user => {
+        const { notifications, subscription } = user;
+        if (notifDetermination(notifications, now)) {
+            const payload = JSON.stringify({
+                title: 'Plant Pals Notification',
+                body: 'Time to care for your plants!',
+            });
+            sendNotification(subscription, payload);
+        }
+    });
+};
+
+cron.schedule('0 * * * *', hourlyNotifCheck);
+
+// Set up Apollo Server with debugging and logging
 const server = new ApolloServer({
   typeDefs,
   resolvers,

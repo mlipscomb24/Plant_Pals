@@ -72,6 +72,19 @@ const UserSchema = new mongoose.Schema(
         type: Date,
       },
     },
+    notifications: {
+      time: {
+        type: [String],
+        enum: ["Morning", "Noon", "Evening"],
+      },
+      dayOfWeek: {
+        type: [String],
+        enum: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      },
+      subscription: {
+        type: Object,
+      }
+    }
   },
   {
     timestamps: true,

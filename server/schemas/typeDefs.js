@@ -90,6 +90,23 @@ const typeDefs = gql`
     image_url: String
   }
 
+  # Input for subscription
+  input SubscriptionInput {
+    endpoint: String!
+    keys: SubscriptionKeysInput!
+  }
+
+  input SubscriptionKeysInput {
+    auth: String!
+    p256dh: String!
+  }
+
+  # Response type for sub mutation
+  type SubscribeResponse {
+    success: Boolean!
+    message: String
+  }
+
   type Query {
     me: User
     plants: [Plant]
@@ -130,6 +147,8 @@ const typeDefs = gql`
     # Social Mutations
     likePost(id: ID!): Post
 
+    # Subscription Mutations
+    subscribeUser(input: SubscriptionInput!): SubscribeResponse
     # Profile Mutations
     updateUserAvatar(avatarUrl: String!): User
   }
