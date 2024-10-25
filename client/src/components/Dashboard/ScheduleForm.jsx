@@ -36,7 +36,7 @@ const ScheduleForm = () => {
             const response = await updateNotifications({
                 variables: {
                     input: {
-                        times: selectedTimes,
+                        time: selectedTimes,
                         dayOfWeek: selectedDays,
                     },
                 },
