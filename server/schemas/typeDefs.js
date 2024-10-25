@@ -112,6 +112,12 @@ const typeDefs = gql`
     message: String
   }
 
+  type NotificationResponse {
+    success: Boolean!
+    message: String
+    user: User
+  }
+
   type Query {
     me: User
     plants: [Plant]
@@ -154,8 +160,6 @@ const typeDefs = gql`
 
     # Subscription Mutations
     subscribeUser(input: SubscriptionInput!): SubscribeResponse
-
-
 
     # Profile Mutations
     updateUserAvatar(avatarUrl: String!): User
