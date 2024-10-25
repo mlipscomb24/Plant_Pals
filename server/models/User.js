@@ -1,5 +1,3 @@
-// server/models/User.js
-
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
@@ -22,6 +20,10 @@ const UserSchema = new mongoose.Schema(
       required: true,
       minlength: 5,
     },
+    avatar: {
+      type: String,
+      default: `https://api.dicebear.com/7.x/avataaars/svg?seed=default`,
+    },
     gamification: {
       currentTier: {
         type: String,
@@ -41,7 +43,6 @@ const UserSchema = new mongoose.Schema(
         ref: "Plant",
       },
     ],
-    // New forum-related fields
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -54,7 +55,6 @@ const UserSchema = new mongoose.Schema(
         ref: "Comment",
       },
     ],
-    // Optional: Forum activity tracking for gamification
     forumActivity: {
       totalPosts: {
         type: Number,
@@ -72,6 +72,19 @@ const UserSchema = new mongoose.Schema(
         type: Date,
       },
     },
+    notifications: {
+      time: {
+        type: [String],
+        enum: ["Morning", "Noon", "Evening"],
+      },
+      dayOfWeek: {
+        type: [String],
+        enum: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      },
+      subscription: {
+        type: Object,
+      }
+    }
   },
   {
     timestamps: true,
@@ -81,22 +94,19 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// Add virtual for post count
+// Virtual for post count
 UserSchema.virtual("postCount").get(function () {
   return this.posts.length;
 });
 
-// Optional: Add method to check if user can post (for rate limiting if needed)
+// Forum activity methods
 UserSchema.methods.canCreatePost = function () {
   if (!this.forumActivity.lastPostDate) return true;
-
   const timeSinceLastPost = Date.now() - this.forumActivity.lastPostDate;
   const minimumWaitTime = 1000 * 60; // 1 minute
-
   return timeSinceLastPost >= minimumWaitTime;
 };
 
-// Optional: Add method to update forum activity
 UserSchema.methods.updateForumActivity = async function (activityType) {
   const update = {};
 
@@ -115,11 +125,9 @@ UserSchema.methods.updateForumActivity = async function (activityType) {
       break;
   }
 
-  // Check if user qualifies for new badges based on activity
+  // Badge check
   const totalActivity =
     this.forumActivity.totalPosts + this.forumActivity.totalComments;
-
-  // Example badge criteria
   if (
     totalActivity >= 10 &&
     !this.gamification.badges.find((b) => b.id === "forum_contributor")
@@ -134,20 +142,32 @@ UserSchema.methods.updateForumActivity = async function (activityType) {
   return this.save();
 };
 
-//pre-save middleware to create password
-
-UserSchema.pre('save', async function(next) {
-  if (this.isNew || this.isModified ('password')) {
+// Authentication methods
+// Pre-save middleware to hash password
+UserSchema.pre("save", async function (next) {
+  if (this.isNew || this.isModified("password")) {
     const saltRounds = 10;
     this.password = await bcrypt.hash(this.password, saltRounds);
   }
   next();
-})
+});
 
-// compare entered password with hashed password
-UserSchema.methods.isValidPassword = async function(password) {
+// Method to check password validity
+UserSchema.methods.isCorrectPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
-  
+};
+
+// Helper method to return user data without sensitive information
+UserSchema.methods.toAuthJSON = function () {
+  return {
+    _id: this._id,
+    username: this.username,
+    email: this.email,
+    avatar: this.avatar,
+    gamification: this.gamification,
+    plants: this.plants,
+    forumActivity: this.forumActivity,
+  };
 };
 
 const User = mongoose.model("User", UserSchema);

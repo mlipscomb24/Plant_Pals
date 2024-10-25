@@ -7,8 +7,8 @@ export const GLOBAL_LOADING_QUERY = gql`
   }
 `;
 
-// Keep existing plant fields fragment
-const PLANT_FIELDS = gql`
+// Fragment for Plant fields
+export const PLANT_FIELDS = gql`
   fragment PlantFields on Plant {
     _id
     name
@@ -19,8 +19,8 @@ const PLANT_FIELDS = gql`
   }
 `;
 
-// Update post fields fragment with more comprehensive fields
-const POST_FIELDS = gql`
+// Updated Post fields fragment with avatar
+export const POST_FIELDS = gql`
   fragment PostFields on Post {
     _id
     title
@@ -29,12 +29,14 @@ const POST_FIELDS = gql`
     author {
       _id
       username
+      avatar
     }
     comments {
       _id
       content
       author {
         username
+        avatar
       }
       createdAt
     }
@@ -43,8 +45,8 @@ const POST_FIELDS = gql`
   }
 `;
 
-// Update comment fields fragment
-const COMMENT_FIELDS = gql`
+// Updated Comment fields fragment with avatar
+export const COMMENT_FIELDS = gql`
   fragment CommentFields on Comment {
     _id
     content
@@ -52,36 +54,19 @@ const COMMENT_FIELDS = gql`
     author {
       _id
       username
+      avatar
     }
   }
 `;
 
-// Keep existing plant-related queries
-export const GET_PLANTS = gql`
-  query getPlants {
-    plants {
-      ...PlantFields
-    }
-  }
-  ${PLANT_FIELDS}
-`;
-
-export const SEARCH_PLANTS = gql`
-  query searchPlants($searchTerm: String!) {
-    searchPlants(searchTerm: $searchTerm) {
-      ...PlantFields
-    }
-  }
-  ${PLANT_FIELDS}
-`;
-
-// Update user query to include forum data
-export const GET_USER = gql`
-  query getUser($username: String!) {
-    user(username: $username) {
+// Updated ME query with avatar
+export const GET_ME = gql`
+  query me {
+    me {
       _id
       username
       email
+      avatar
       plants {
         ...PlantFields
       }
@@ -91,6 +76,19 @@ export const GET_USER = gql`
       comments {
         ...CommentFields
       }
+      gamification {
+        currentTier
+        badges {
+          id
+          name
+          description
+        }
+      }
+      forumActivity {
+        totalPosts
+        totalComments
+        helpfulResponses
+      }
     }
   }
   ${PLANT_FIELDS}
@@ -98,55 +96,84 @@ export const GET_USER = gql`
   ${COMMENT_FIELDS}
 `;
 
-// Update forum queries
+// Search Plants query remains the same
+export const SEARCH_PLANTS = gql`
+  query SearchPlants($searchTerm: String!) {
+    searchPlants(searchTerm: $searchTerm) {
+      _id
+      name
+      species
+      waterFrequency
+      sunlightNeeds
+      image_url
+    }
+  }
+`;
+
+// Get all Plants query remains the same
+export const GET_PLANTS = gql`
+  query getPlants {
+    plants {
+      ...PlantFields
+    }
+  }
+  ${PLANT_FIELDS}
+`;
+
+// Updated Get User query with avatar
+export const GET_USER = gql`
+  query getUser($username: String!) {
+    user(username: $username) {
+      _id
+      username
+      email
+      avatar
+      plants {
+        ...PlantFields
+      }
+      posts {
+        ...PostFields
+      }
+      comments {
+        ...CommentFields
+      }
+      gamification {
+        currentTier
+        badges {
+          id
+          name
+          description
+        }
+      }
+      forumActivity {
+        totalPosts
+        totalComments
+        helpfulResponses
+      }
+    }
+  }
+  ${PLANT_FIELDS}
+  ${POST_FIELDS}
+  ${COMMENT_FIELDS}
+`;
+
+// Forum Queries remain the same as they use updated fragments
 export const GET_POSTS = gql`
   query GetPosts {
     posts {
-      _id
-      title
-      content
-      createdAt
-      author {
-        _id
-        username
-      }
-      comments {
-        _id
-        content
-        author {
-          username
-        }
-        createdAt
-      }
-      likes
-      tags
+      ...PostFields
     }
   }
+  ${POST_FIELDS}
 `;
 
 export const GET_POST = gql`
   query GetPost($id: ID!) {
     post(id: $id) {
-      _id
-      title
-      content
-      createdAt
-      author {
-        _id
-        username
-      }
-      comments {
-        _id
-        content
-        author {
-          username
-        }
-        createdAt
-      }
-      likes
-      tags
+      ...PostFields
     }
   }
+  ${POST_FIELDS}
 `;
 
 export const GET_USER_POSTS = gql`
@@ -158,42 +185,35 @@ export const GET_USER_POSTS = gql`
   ${POST_FIELDS}
 `;
 
+// Updated Query Users with avatar
 export const QUERY_USERS = gql`
- query allUsers { 
-  users {
-    _id
-    username
-    plants
-  }
-}   
-`;
-
-export const QUERY_SINGLE_USER = gql`
-  query singleUser($userId: ID!) {
-  user(userId: $userId) {
-    _id
-    username
-    plants {
-      _id
-      species
-      waterFrequency
-      }
-  }
-}
-`;
-
-export const QUERY_ME = gql`
-  query me {
-    me {
+  query allUsers {
+    users {
       _id
       username
+      avatar
       plants {
-        _id
-        species
-        waterFrequency
+        ...PlantFields
       }
     }
-  `;
+  }
+  ${PLANT_FIELDS}
+`;
+
+// Updated Single User query with avatar
+export const QUERY_SINGLE_USER = gql`
+  query singleUser($userId: ID!) {
+    user(userId: $userId) {
+      _id
+      username
+      avatar
+      plants {
+        ...PlantFields
+      }
+    }
+  }
+  ${PLANT_FIELDS}
+`;
 
 // Export all fragments for reuse
 export const FRAGMENTS = {

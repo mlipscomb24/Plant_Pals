@@ -1,13 +1,56 @@
 import { gql } from "@apollo/client";
 
-// Existing plant-related mutations
+// Authentication Mutations
+export const LOGIN_USER = gql`
+  mutation login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        _id
+        username
+        email
+        avatar
+      }
+    }
+  }
+`;
+
+export const ADD_USER = gql`
+  mutation createUser(
+    $username: String!
+    $email: String!
+    $password: String!
+    $firstName: String
+    $lastName: String
+  ) {
+    createUser(
+      username: $username
+      email: $email
+      password: $password
+      firstName: $firstName
+      lastName: $lastName
+    ) {
+      token
+      user {
+        _id
+        username
+        email
+        avatar
+      }
+    }
+  }
+`;
+
+// Plant Mutations
 export const ADD_PLANT = gql`
   mutation AddPlant($plantData: PlantInput!) {
     addPlant(plantData: $plantData) {
       _id
       name
-      waterReminder
+      species
+      waterFrequency
       sunlightNeeds
+      image_url
     }
   }
 `;
@@ -20,7 +63,7 @@ export const DELETE_PLANT = gql`
   }
 `;
 
-// New forum-related mutations
+// Forum Mutations
 export const CREATE_POST = gql`
   mutation CreatePost($input: PostInput!) {
     createPost(input: $input) {
@@ -30,12 +73,19 @@ export const CREATE_POST = gql`
       author {
         _id
         username
+        avatar
       }
       createdAt
       likes
       tags
       comments {
         _id
+        content
+        author {
+          username
+          avatar
+        }
+        createdAt
       }
     }
   }
@@ -67,6 +117,7 @@ export const CREATE_COMMENT = gql`
       author {
         _id
         username
+        avatar
       }
       createdAt
     }
@@ -82,36 +133,37 @@ export const LIKE_POST = gql`
   }
 `;
 
-export const LOGIN_USER = gql`
-  mutation LoginUser($email: String!, $password: String!) {
-  login(email: $email, password: $password) {
-  token 
-  user {
-    _id
-     }
-   }
- }
-`;
-
-export const CREATE_USER = gql`
-  mutation createUser(
-  $firstName: String!, 
-  $lastName: String!
-  $email: String!, 
-  $password: String!
+// Update Profile Mutations
+export const UPDATE_USER = gql`
+  mutation updateUser(
+    $firstName: String
+    $lastName: String
+    $email: String
+    $password: String
   ) {
-    createUser(
-    firstName: $firstName, 
-    lastName: $lastName, 
-    email: $email, 
-    password: $password
+    updateUser(
+      firstName: $firstName
+      lastName: $lastName
+      email: $email
+      password: $password
     ) {
-      token
-      user {
-        _id 
-        }
+      _id
+      username
+      email
+      firstName
+      lastName
+      avatar
     }
-}
+  }
 `;
 
-
+// Avatar Mutation
+export const UPDATE_USER_AVATAR = gql`
+  mutation UpdateUserAvatar($avatarUrl: String!) {
+    updateUserAvatar(avatarUrl: $avatarUrl) {
+      _id
+      username
+      avatar
+    }
+  }
+`;

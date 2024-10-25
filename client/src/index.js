@@ -13,9 +13,15 @@ import "semantic-ui-css/semantic.min.css";
 import "./custom.css";
 import App from "./App.jsx";
 
+// Determine the GraphQL endpoint based on the environment
+const gqlEndpoint =
+  process.env.NODE_ENV === "production"
+    ? "https://plant-pals.onrender.com/graphql"
+    : "http://localhost:3001/graphql";
+
 // Create an HTTP link
 const httpLink = createHttpLink({
-  uri: "http://localhost:3001/graphql",
+  uri: gqlEndpoint, // Adjust this if your GraphQL endpoint is different
 });
 
 // Error handling link
@@ -42,6 +48,8 @@ const authLink = setContext((_, { headers }) => {
 
 // Create Apollo Client with all links properly chained
 const client = new ApolloClient({
+
+  uri: gqlEndpoint,
   link: errorLink.concat(authLink.concat(httpLink)), // Chain the links together
   cache: new InMemoryCache(),
   defaultOptions: {
@@ -66,3 +74,27 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
+
+// Service worker registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register("/pwa-service-worker.js")
+  .then(registration => {
+    console.log("Service worker registered: ", registration.scope);
+
+    registration.onupdatefound = () => {
+      const installingWorker = registration.installing;
+      installingWorker.onstatechange = () => {
+        if (installingWorker.state === "installed") {
+          if (navigator.serviceWorker.controller) {
+            console.log("New content is available; please refresh.");
+          } else {
+            console.log("Content is cached for offline use.");
+        }
+      }
+    };
+  };
+})
+.catch(error => {
+  console.error("Error during service worker registration:", error);
+});
+}
