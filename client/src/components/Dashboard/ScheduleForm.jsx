@@ -3,12 +3,45 @@ import { Checkbox, Form, Button } from 'semantic-ui-react';
 import { useMutation, gql } from '@apollo/client';
 
 const PUSH_SCHEDULER = gql`
-    mutation pushScheduler()
+    mutation pushScheduler($input: NotificationInput!) {
+        pushScheduler(input: $input) {
+            success
+            message
+        }
+    }
 `;
 const ScheduleForm = () => {
+    const [selectedTimes, setSelectedTimes] = useState([]);
+    const [selectedDays, setSelectedDays] = useState([]);
+    const [pushScheduler] = useMutation(PUSH_SCHEDULER);
+
+    const handleTimeChange = (event, { value }) => {
+        setSelectedTimes((prevTimes) =>
+            prevTimes.includes(value)
+            ? prevTimes.filter((time) => time !== value)
+            : [...prevTimes, value]
+);
+    };
+
+        const handleDayChange = (event, { value }) => {
+        setSelectedDays((prevDays) =>
+            prevDays.includes(value)
+            ? prevDays.filter((day) => day !== value)
+            : [...prevDays, value]
+);
+    };
+
     const handleSubmit = async () => {
-        try {}
-        catch (error) {
+        try {
+            const response = await pushScheduler({
+                variables: {
+                    input: {
+                        times: selectedTimes,
+                        days: selectedDays,
+                    },
+                },
+        });
+    } catch (error) {
             console.error('Failed to save preferences', error);
         }
     };
@@ -16,19 +49,19 @@ return (
     <Form>
         <Form.Field>
         <label>Choose the time of day would</label>
-        <Checkbox label='Morning' />
-        <Checkbox label='Noon' />
-        <Checkbox label='Evening' />
+        <Checkbox label='Morning' value='Morning' onChange={handleTimeChange} />
+        <Checkbox label='Noon' value='Noon' onChange={handleTimeChange} />
+        <Checkbox label='Evening' value='Evening' onChange={handleTimeChange} />
         </Form.Field>
         <Form.Field>
         <label>Choose the day of the week</label>
-        <Checkbox label='Sunday' />
-        <Checkbox label='Monday' />
-        <Checkbox label='Tuesday' />
-        <Checkbox label='Wednesday' />
-        <Checkbox label='Thursday' />
-        <Checkbox label='Friday' />
-        <Checkbox label='Saturday' />
+        <Checkbox label='Sunday' value='Sunday' onChange={handleDayChange} />
+        <Checkbox label='Monday' value='Morning' onChange={handleDayChange} />
+        <Checkbox label='Tuesday' value='Tuesday' onChange={handleDayChange} />
+        <Checkbox label='Wednesday' value='Wednesday' onChange={handleDayChange} />
+        <Checkbox label='Thursday' value='Thursday' onChange={handleDayChange} />
+        <Checkbox label='Friday' value='Friday' onChange={handleDayChange} />
+        <Checkbox label='Saturday' value='Saturday' onChange={handleDayChange} />
         </Form.Field>
         <Button onClick={handleSubmit}>Save Preferences</Button>
     </Form>
