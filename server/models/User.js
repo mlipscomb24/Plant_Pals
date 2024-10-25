@@ -135,7 +135,8 @@ UserSchema.methods.updateForumActivity = async function (activityType) {
 };
 
 //pre-save middleware to create password
-userSchema.pre('save', async function(next) {
+
+UserSchema.pre('save', async function(next) {
   if (this.isNew || this.isModified ('password')) {
     const saltRounds = 10;
     this.password = await bcrypt.hash(this.password, saltRounds);
@@ -144,7 +145,7 @@ userSchema.pre('save', async function(next) {
 })
 
 // compare entered password with hashed password
-userSchema.methods.isValidPassword = async function(password) {
+UserSchema.methods.isValidPassword = async function(password) {
   return await bcrypt.compare(password, this.password);
   
 };
