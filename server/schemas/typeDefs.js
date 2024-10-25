@@ -155,11 +155,12 @@ const typeDefs = gql`
     # Subscription Mutations
     subscribeUser(input: SubscriptionInput!): SubscribeResponse
 
-    
+
 
     # Profile Mutations
     updateUserAvatar(avatarUrl: String!): User
-    
+
+    updateNotifications(input: NotificationInput!): NotificationResponse
   }
 `;
 
