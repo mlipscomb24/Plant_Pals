@@ -101,6 +101,11 @@ const typeDefs = gql`
     p256dh: String!
   }
 
+  input NotificationInput {
+    time: [String]
+    dayOfWeek: [String]
+  }
+
   # Response type for sub mutation
   type SubscribeResponse {
     success: Boolean!
@@ -149,8 +154,12 @@ const typeDefs = gql`
 
     # Subscription Mutations
     subscribeUser(input: SubscriptionInput!): SubscribeResponse
+
+    
+
     # Profile Mutations
     updateUserAvatar(avatarUrl: String!): User
+    
   }
 `;
 

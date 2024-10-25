@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'semantic-ui-react';
 
 const NotificationButton = () => {
+    const [isSubscribed, setIsSubscribed] = useState(false);
+
+    useEffect(() => {
+        const checkSubscription = async () => {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.getSubscription();
+            setIsSubscribed(!!subscription);
+        };
+        checkSubscription();
+    }, []);
 
     const SUBSCRIBE_USER_MUTATION = `
         mutation SubscribeUser($input: SubscriptionInput!) {
@@ -85,8 +95,11 @@ const NotificationButton = () => {
     };
 
     return (
-        <Button onClick={requestNotificationPermission} color="green">
-            Enable Notifications
+        <Button onClick={requestNotificationPermission} 
+        color={isSubscribed ? 'grey' : 'green'}
+        disabled={isSubscribed}
+        >
+            {isSubscribed ? 'Notifications Enabled' : 'Enable Notifications'}
         </Button>
     );
 };

@@ -1,5 +1,5 @@
 // Installation
-const CACHE_VERSION = 'v0.5.0';
+const CACHE_VERSION = 'v0.6.0';
 self.addEventListener("install", event => {
     console.log("Service worker installing...");
     event.waitUntil(
@@ -36,50 +36,12 @@ self.addEventListener('fetch', (event) => {
     } 
     else if (event.request.method === 'POST' && url.pathname.startsWith('/graphql')) {
         event.respondWith(fetch(event.request));
-        //     caches.open('gql-cache').then((cache) => {
-        //         return cache.match(event.request).then((cachedResponse) => {
-        //             const fetchPromise = fetch(event.request).then((networkResponse) => {
-        //                 if (networkResponse.ok) {
-        //                     cache.put(event.request, networkResponse.clone());
-        //                 }
-        //                 return networkResponse;
-        //             });
-        //             return cachedResponse || fetchPromise;
-        //         });
-        //     })
-        // );
+
     }
     else {
         event.respondWith(fetch(event.request));
     }
 });
-
-// // Cache procedure for plant api
-//     if (url.pathname.startsWith('/api/plants/search')) {
-//     event.respondWith(
-//         caches.open('plant-search-cache').then((cache) => { 
-//             return cache.match(event.request).then((cachedResponse) => {
-//                 const fetchPromise = fetch(event.request).then((networkResponse) => {
-//                     cache.put(event.request, networkResponse.clone()); // Update cache with fresh response
-//                     return networkResponse;
-//                 });
-//                 return cachedResponse || fetchPromise; // Serve cached, then update in background
-//             });
-//             })
-//         );
-//         }
-//     });
-//   event.respondWith(
-//     caches.open('dynamic-cache').then((cache) => {
-//       return cache.match(event.request).then((cachedResponse) => {
-//         const fetchPromise = fetch(event.request).then((networkResponse) => {
-//           cache.put(event.request, networkResponse.clone()); // Update cache with fresh response
-//           return networkResponse;
-//         });
-//         return cachedResponse || fetchPromise; // Serve cached, then update in background
-//       });
-//     })
-//   );
 
 self.addEventListener('push', (event) => {
     console.log(Notification.permission);  // Should be 'granted'
