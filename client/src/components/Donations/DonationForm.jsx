@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 
-export default function DonationForm() {
+export default function DonationForm({ clientSecret, amount }) {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState(null);
@@ -39,6 +39,16 @@ export default function DonationForm() {
 
   return (
     <form id="donation-form" onSubmit={handleSubmit}>
+      <label>
+        Donation Amount:
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => (e.target.value)}
+          min="1"
+          required
+        />
+      </label>
       <PaymentElement id="payment-element" />
       <button disabled={isProcessing || !stripe || !elements} id="submit">
         <span id="button-text">
