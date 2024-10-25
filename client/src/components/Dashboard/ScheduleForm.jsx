@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Checkbox, Form, Button } from 'semantic-ui-react';
 import { useMutation, gql } from '@apollo/client';
 
-const PUSH_SCHEDULER = gql`
-    mutation pushScheduler($input: NotificationInput!) {
-        pushScheduler(input: $input) {
+const UPDATE_NOTIFICATIONS = gql`
+    mutation updateNotifications($input: NotificationInput!) {
+        updateNotifications(input: $input) {
             success
             message
         }
@@ -13,7 +13,7 @@ const PUSH_SCHEDULER = gql`
 const ScheduleForm = () => {
     const [selectedTimes, setSelectedTimes] = useState([]);
     const [selectedDays, setSelectedDays] = useState([]);
-    const [pushScheduler] = useMutation(PUSH_SCHEDULER);
+    const [updateNotifications] = useMutation(UPDATE_NOTIFICATIONS);
 
     const handleTimeChange = (event, { value }) => {
         setSelectedTimes((prevTimes) =>
@@ -33,11 +33,11 @@ const ScheduleForm = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await pushScheduler({
+            const response = await updateNotifications({
                 variables: {
                     input: {
                         times: selectedTimes,
-                        days: selectedDays,
+                        dayOfWeek: selectedDays,
                     },
                 },
         });
