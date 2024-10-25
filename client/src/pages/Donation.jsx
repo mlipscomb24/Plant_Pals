@@ -1,31 +1,43 @@
+import { useEffect, useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import DonationForm from "./DonationForm"; // Correct import path
 
-import React, { useState, useEffect } from "react";
-import { Container, Segment, Header } from "semantic-ui-react";
-import Payment from "../components/Donations/Payment"; // Correct import path
-
-const Donation = () => {
-  const [clientSecret, setClientSecret] = useState('');
+function Payment(pramount, setAmountops) {
+  const [stripePromise, setStripePromise] = useState(null);
+  const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
-    // Fetch the clientSecret from your backend
+    // Fetch the Stripe publishable key from your server
+    fetch("/config").then(async (r) => {
+      const { publishableKey } = await r.json();
+      setStripePromise(loadStripe(publishableKey));
+    });
+  }, []);
+
+  useEffect(() => {
+    // Create a Payment Intent on the server
     fetch("/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
-    }).then(async (res) => {
-      const { clientSecret } = await res.json();
+    }).then(async (r) => {
+      const { clientSecret } = await r.json();
       setClientSecret(clientSecret);
     });
   }, []);
 
   return (
-    <Container>
-      <Segment>
-        <Header as="h1">Donate to Plant Pals</Header>
-        {clientSecret && <Payment />}
-      </Segment>
-    </Container>
+    <>
+      <h1>Donations To Plant Pals</h1>
+      {stripePromise && clientSecret && (
+        <Elements stripe={stripePromise} options={{ clientSecret }}>
+          
+          <DonationForm /> {/* Render your donation form */}
+        </Elements>
+      )}
+    </>
   );
-};
+}
 
-export default Donation;
+export default Payment;

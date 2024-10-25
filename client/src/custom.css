@@ -192,21 +192,77 @@ fieldset, input, select {
   border: 1px solid #efefef;
 }
 
-#donation-form {
-  border: #F6F9FC solid 1px;
-  border-radius: var(--radius);
-  padding: 20px;
-  margin: 20px 0;
-  box-shadow: 0 30px 50px -20px rgb(50 50 93 / 25%), 0 30px 60px -30px rgb(0 0 0 / 30%);
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
 }
 
-#messages {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
-  display: none; /* hide initially, then show once the first message arrives */
-  background-color: #0A253C;
-  color: #00D924;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
   padding: 20px;
-  margin: 20px 0;
-  border-radius: var(--radius);
-  font-size:0.7em;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.segment {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Styles */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+input[type="number"] {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #0570de;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #045bb5;
+}
+
+#payment-message {
+  margin-top: 20px;
+  color: #df1b41;
+  font-weight: bold;
+}
+
+/* Stripe Element Styles */
+#payment-element {
+  margin-bottom: 20px;
 }

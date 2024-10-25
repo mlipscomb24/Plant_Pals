@@ -17,6 +17,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Plantcare from "./pages/Plantcare";
 import Donation from "./pages/Donation";
+import Completions from "./components/Donations/Completions";
 import PostDetail from "./pages/PostDetail";
 import Header from "./components/Header";
 import Signup from "./pages/Signup";
@@ -110,6 +111,7 @@ function AppContent() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/donation" element={<Donation/>} />
+          <Route path="/completion" element={<Completions/>} />
 
           {/* Forum Routes */}
           <Route path="/plantcare" element={<Plantcare />} />

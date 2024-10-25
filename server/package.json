@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node server.js",
-    "watch": "nodemon server.js"
     "watch": "nodemon server.js",
     "seed": "node seeds/forumSeeds.js"
   },
@@ -21,6 +20,7 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.1",
     "node-fetch": "^2.7.0",
+    "stripe": "^17.2.1",
     "web-push": "^3.6.7"
   },
   "devDependencies": {

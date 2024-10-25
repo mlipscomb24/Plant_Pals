@@ -8,6 +8,7 @@ const { authMiddleware } = require("./utils/auth");
 const plantApiService = require("./services/plantApiService");
 require("dotenv").config();
 
+
 const { Post, Comment, User } = require("./models");
 
 const app = express();
