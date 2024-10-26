@@ -30,10 +30,16 @@ Let’s grow together and bring some greenery into our daily lives — one plant
 - **Responsive Design**: The app is designed to be responsive across all device sizes.
 - **Progressive Web Application & Service Worker**: Plant Pals employs a custom Service Worker that enhances accessibility and allows users to set up push notifications.
 
+## Screenshots
+
+| Home Page                           | Plant Care Forum                            | Profile                              |
+| ----------------------------------- | ------------------------------------------- | ------------------------------------ |
+| ![Home Page](/screenshots/home.png) | ![Plant Care Forum](/screenshots/forum.png) | ![Profile](/screenshots/profile.png) |
+
 ## Technologies Used
 
 - **Frontend**: React, Semantic UI React for styling, Apollo Client for GraphQL interactions, Service Worker for caching and PWA.
-- **Backend**: Node.js, Express.js, MongoDB, Apollo Server for handling GraphQL queries/mutations.
+- **Backend**: Node.js, Express.js, MongoDB, Apollo Server for handling GraphQL queries/mutations, node-cron for scheduling background tasks, web-push for sending push notifications.
 - **Database**: MongoDB with Mongoose for schema modeling.
 - **API**: Integrated with the **Perenual API** for plant searches.
 
@@ -54,7 +60,7 @@ Let’s grow together and bring some greenery into our daily lives — one plant
 
 3. Set up environment variables:
    - Create a `.env` file in both client and server directories.
-   - Set up environment variables for API keys (such as Perenual), database connection (MongoDB URI), and authentication (JWT secret, etc.).
+   - Set up environment variables for API keys (such as Perenual), database connection (MongoDB URI), and authentication (JWT secret, VAPID keys, etc.).
 4. Start the development server:
 
    ```bash
