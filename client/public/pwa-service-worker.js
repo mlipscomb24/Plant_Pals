@@ -1,23 +1,24 @@
+// Service Worker Cache Strategy Resources referenced
+// https://developer.chrome.com/docs/workbox/caching-strategies-overview
+
 // Installation
-const CACHE_VERSION = 'v0.6.0';
+const CACHE_VERSION = 'v0.7.0';
+// Pre-cache strategy page naviga
 self.addEventListener("install", event => {
-    console.log("Service worker installing...");
     event.waitUntil(
         caches.open(`static-cache-${CACHE_VERSION}`).then((cache) => {
             return cache.addAll([
                 '/',
+                '/signup',
+                '/login',
+                '/profile',
+                '/plantcare',
                 '/images/icons/Plant_Pals_192.png',
                 '/images/icons/Plant_Pals_512.png',
             ]);
         })
     );
     });
-
-self.addEventListener("activate", event => {
-    console.log("Service worker activating...");
-    });
-
-console.log('Service Worker Registration:', self.registration);
 
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
@@ -44,8 +45,6 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-    console.log(Notification.permission);  // Should be 'granted'
-    console.log('Push event received:', event);
     const data = event.data.json();
 
     console.log('Push data:', data);

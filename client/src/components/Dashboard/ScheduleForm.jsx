@@ -48,13 +48,13 @@ const ScheduleForm = () => {
 return (
     <Form>
         <Form.Field>
-        <label>Choose the time of day would</label>
+        <label>Notification time of day</label>
         <Checkbox label='Morning' value='Morning' onChange={handleTimeChange} />
         <Checkbox label='Noon' value='Noon' onChange={handleTimeChange} />
         <Checkbox label='Evening' value='Evening' onChange={handleTimeChange} />
         </Form.Field>
         <Form.Field>
-        <label>Choose the day of the week</label>
+        <label>Notification day of week</label>
         <Checkbox label='Sunday' value='Sunday' onChange={handleDayChange} />
         <Checkbox label='Monday' value='Morning' onChange={handleDayChange} />
         <Checkbox label='Tuesday' value='Tuesday' onChange={handleDayChange} />

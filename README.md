@@ -3,6 +3,7 @@
 ### A plant management and social forum application. 🌿 Grow your own plant kingdom, connect with fellow plant lovers, and unlock your inner green thumb! 🌱
 
 ## Table of Contents
+
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
@@ -27,35 +28,38 @@ Let’s grow together and bring some greenery into our daily lives — one plant
 - **Gamification**: Earn badges and levels based on the number of plants in the user's collection.
 - **Forum**: Users can create posts, comment on posts, and engage with others in a plant care community.
 - **Responsive Design**: The app is designed to be responsive across all device sizes.
-  
+- **Progressive Web Application & Service Worker**: Plant Pals employs a custom Service Worker that enhances accessibility and allows users to set up push notifications.
+
 ## Technologies Used
 
-- **Frontend**: React, Semantic UI React for styling, Apollo Client for GraphQL interactions.
+- **Frontend**: React, Semantic UI React for styling, Apollo Client for GraphQL interactions, Service Worker for caching and PWA.
 - **Backend**: Node.js, Express.js, MongoDB, Apollo Server for handling GraphQL queries/mutations.
 - **Database**: MongoDB with Mongoose for schema modeling.
 - **API**: Integrated with the **Perenual API** for plant searches.
-  
+
 ## Installation
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/plant-pals.git
-    cd plant-pals
-    ```
+
+   ```bash
+   git clone https://github.com/yourusername/plant-pals.git
+   cd plant-pals
+   ```
 
 2. Install the dependencies:
-    ```bash
-    npm install
-    ```
+
+   ```bash
+   npm install
+   ```
 
 3. Set up environment variables:
-    - Create a `.env` file in both client and server directories.
-    - Set up environment variables for API keys (such as Perenual), database connection (MongoDB URI), and authentication (JWT secret, etc.).
-    
+   - Create a `.env` file in both client and server directories.
+   - Set up environment variables for API keys (such as Perenual), database connection (MongoDB URI), and authentication (JWT secret, etc.).
 4. Start the development server:
-    ```bash
-    npm run dev
-    ```
+
+   ```bash
+   npm run dev
+   ```
 
    This will start both the frontend and backend servers.
 
@@ -64,8 +68,9 @@ Let’s grow together and bring some greenery into our daily lives — one plant
 - **Search Plants**: Use the search bar on the home page to find specific plants from the API.
 - **Manage Plants**: Add plants to your collection and see them reflected in your profile with gamification badges based on plant count.
 - **Create Posts**: Navigate to the forum section and create new posts. Comment on others' posts to engage with the community.
-  
+
 ### Key Files and Folders:
+
 - `client/src/components/` - Contains reusable React components.
 - `server/models/` - MongoDB models for users, posts, plants, and comments.
 - `server/resolvers.js` - GraphQL resolvers for queries and mutations.
@@ -74,9 +79,8 @@ Let’s grow together and bring some greenery into our daily lives — one plant
 ## API Integration
 
 - **Perenual API**: The app integrates with [Perenual API](https://perenual.com/) to fetch plant data based on user search terms. This API provides plant information such as species, sunlight needs, and watering frequency.
-  
-  In order to make API requests, ensure you have a valid API key from the Perenual API and set it up in your `.env` file as follows:
 
+  In order to make API requests, ensure you have a valid API key from the Perenual API and set it up in your `.env` file as follows:
 
 You can sign up for a free Perenual API key [here](https://perenual.com/signup).
 
@@ -86,17 +90,23 @@ We welcome contributions! If you would like to contribute to Plant Pals, please 
 
 1. Fork the repository
 2. Create a new feature branch
-  ```bash
-  git checkout -b feature-name
-  ```
+
+```bash
+git checkout -b feature-name
+```
+
 3. Commit your changes
-  ```bash
-  git commit -m 'Add some feature'
-  ```
+
+```bash
+git commit -m 'Add some feature'
+```
+
 4. Push to the branch
-  ```bash
-  git push origin feature-name
-  ```
+
+```bash
+git push origin feature-name
+```
+
 5. Create a pull request
 
 ## License

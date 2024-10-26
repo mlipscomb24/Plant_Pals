@@ -242,6 +242,9 @@ const resolvers = {
     },
 
     updateNotifications: async (_, { input }, { user }) => {
+    console.log("Notification Input Received:", input);
+    console.log("Time:", input.time);
+    console.log("Day of Week:", input.dayOfWeek);
       try {
         const updateUser = await User.findByIdAndUpdate(
           user._id,
