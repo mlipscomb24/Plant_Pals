@@ -240,10 +240,39 @@ const resolvers = {
       }
     // Subscription logic
     },
-    },
 
+    updateNotifications: async (_, { input }, { user }) => {
+    console.log("Notification Input Received:", input);
+    console.log("Time:", input.time);
+    console.log("Day of Week:", input.dayOfWeek);
+      try {
+        const updateUser = await User.findByIdAndUpdate(
+          user._id,
+          {
+            $set: {
+              'notifications.time': input.time,
+              'notifications.dayOfWeek': input.dayOfWeek,
+            },
+          },
+          { new: true }
+        );
+        return {
+          success: true,
+          message: 'User notifications updated successfully',
+          user: updateUser,
+        };
+      } catch (error) {
+        console.error('Error updating user notifications:', error);
+        return {
+          success: false,
+          message: 'Error updating user notifications',
+        };
+      }
+    },
+  },
   // Type Resolvers
-  Post: {
+
+Post: {
     author: (parent) => parent.author || { username: "Anonymous" },
     comments: (parent) => parent.comments || [],
     likes: (parent) => parent.likes || 0,

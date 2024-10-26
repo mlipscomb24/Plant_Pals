@@ -14,7 +14,6 @@ const InstallButton = () => {
         window.addEventListener('beforeinstallprompt', handler);
 
         const handleInstallation = (event) => {
-            console.log('👍', 'appinstalled', event);
             setIsInstalled(true);
         };
         // appinstalled - browser triggered event when web app installed
