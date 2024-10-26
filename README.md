@@ -32,9 +32,9 @@ Let’s grow together and bring some greenery into our daily lives — one plant
 
 ## Screenshots
 
-| Home Page                           | Plant Care Forum                            | Profile                              |
-| ----------------------------------- | ------------------------------------------- | ------------------------------------ |
-| ![Home Page](/screenshots/home.png) | ![Plant Care Forum](/screenshots/forum.png) | ![Profile](/screenshots/profile.png) |
+| Home Page                            | Plant Care Forum                             | Profile                               |
+| ------------------------------------ | -------------------------------------------- | ------------------------------------- |
+| ![Home Page](./screenshots/home.png) | ![Plant Care Forum](./screenshots/forum.png) | ![Profile](./screenshots/profile.png) |
 
 ## Technologies Used
 
