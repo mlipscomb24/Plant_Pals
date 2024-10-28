@@ -128,4 +128,4 @@ This project is a collaborative effort. Our team members are:
 - [mlipscomb24](https://github.com/mlipscomb24)
 - [Hamszn](https://github.com/Hamszn)
 
-We appreciate the hard work and contributions of all team members in making this project possible.
+We appreciate the hard work and contributions of all team members in making this project possible. To view Plant Pals please visit - [Render Plant Pals](https://plant-pals.onrender.com/) 
