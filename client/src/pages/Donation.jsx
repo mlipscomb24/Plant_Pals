@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import DonationForm from "../components/Donations/DonationForm"; // Correct import path
+import { Header, } from "semantic-ui-react";
 
 function Payment(pramount, setAmountops) {
   const [stripePromise, setStripePromise] = useState(null);
@@ -29,7 +30,7 @@ function Payment(pramount, setAmountops) {
 
   return (
     <>
-      <h1>Donations To Plant Pals</h1>
+      <h1>Donate To Plant Pals</h1>
       {stripePromise && clientSecret && (
         <Elements stripe={stripePromise} options={{ clientSecret }}>
           

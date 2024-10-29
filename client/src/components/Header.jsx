@@ -57,6 +57,20 @@ const Header = () => {
               Profile
             </Button>
           </Menu.Item>
+          <Menu.Item>
+            <Button
+              as={Link}
+              to="/donation"
+              size="large"
+              style={{
+                backgroundColor: "#818cf8",
+                color: "white",
+                marginRight: "em",
+              }}
+            >
+              Donate
+            </Button>
+          </Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item>
               <Button

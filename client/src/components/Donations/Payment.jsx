@@ -51,7 +51,7 @@ function Payment({ amount, setAmount }) {
   }
 
   const appearance = {
-    theme: 'stripe', // You can choose 'stripe', 'flat', 'night', 'none'
+    theme: 'stripe', // Stripe ui:'stripe', 'flat', 'night', 'none'
     variables: {
       colorPrimary: '#0570de',
       colorBackground: '#ffffff',

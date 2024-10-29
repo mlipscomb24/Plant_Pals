@@ -19,7 +19,7 @@ export default function DonationForm({ clientSecret, amount }) {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/completion`,
+        return_url: `${window.location.origin}/Completion`,
       },
       redirect: "if_required",
     });
@@ -47,6 +47,7 @@ export default function DonationForm({ clientSecret, amount }) {
           onChange={(e) => (e.target.value)}
           min="1"
           required
+          
         />
       </label>
       <PaymentElement id="payment-element" />
