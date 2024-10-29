@@ -40,6 +40,11 @@ const CREATE_COMMENT = gql`
     createComment(input: $input) {
       _id
       content
+      createdAt
+      author {
+        _id
+        username
+      }
     }
   }
 `;
@@ -129,19 +134,6 @@ const PostDetail = () => {
         {new Date(parseInt(post.createdAt)).toLocaleDateString()}
       </div>
 
-      {post.tags?.length > 0 && (
-        <div className="mt-4 mb-4">
-          {post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="mr-2 px-2 py-1 bg-gray-200 rounded-full text-sm"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-
       <div className="mt-4 mb-8">{post.content}</div>
 
       <Divider />
@@ -171,7 +163,6 @@ const PostDetail = () => {
           </Comment>
         ))}
 
-        {/* Temporarily allow everyone to comment */}
         <Form reply onSubmit={handleCommentSubmit} error={!!error}>
           <Message error content={error} />
           <Form.TextArea
